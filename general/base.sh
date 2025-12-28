@@ -19,8 +19,10 @@ if [[ "$HG_CPU" -eq "intel"]]; then
 else
   yay -S --noconfirm amd-ucode
 
-yay -S --noconfirm nvidia-dkms nvidia-utils lib32-nvidia-utils egl-wayland
-
+if [[ "$HG_GPU" -eq "amd" ]]; then
+  yay -S --noconfirm nvidia-dkms nvidia-utils lib32-nvidia-utils egl-wayland
+else
+  yay -S --noconfirm
 
 
 
