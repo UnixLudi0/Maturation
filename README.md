@@ -1,8 +1,8 @@
 # Maturation
-My personal ricing of [MangoWC](https://mangowc.vercel.app) using ARU optimization.
+My personal ricing of [MangoWC](https://mangowc.vercel.app) using ARU and CachyOS optimization.
 This project aims to bring optimization, integration, candy-eye to your desktop.
 This project is in passive development.
-Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](https://ventureo.codeberg.page)
+Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](https://ventureo.codeberg.page) and [CachyOS](https://cachyos.org/), especially the [wiki](https://wiki.cachyos.org/)
 
 ## Applications
 | Application Type         | Application Realization     |
