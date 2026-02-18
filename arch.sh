@@ -36,45 +36,53 @@ mount $part1 /mnt/boot/efi
 
 curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz
 tar xvf cachyos-repo.tar.xz && cd cachyos-repo
-sudo ./cachyos-repo.sh
+./cachyos-repo.sh
 
 pacstrap -M -P -c -i /mnt base linux-cachyos cachyos-keyring cachyos-mirrorlist cachyos-v3-mirrorlist
 genfstab -U /mnt >> /mnt/etc/fstab
-arch-chroot /mnt
-ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime
-hwclock --systohc
-sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
-sed -i 's/#ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/g' /etc/locale.gen
-locale-gen
-echo "LANG=ru_RU.UTF-8" > /etc/locale.conf
-echo "KEYMAP=ru" > /etc/vconsole.conf
-echo "FONT=cyr-sun16" >> /etc/vconsole.conf
+git clone https://github.com/UnixLudi0/Maturation.git /mnt/root
+arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+arch-chroot /mnt hwclock --systohc
+arch-chroot /mnt sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
+arch-chroot /mnt sed -i 's/#ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/g' /etc/locale.gen
+arch-chroot /mnt locale-gen
+arch-chroot /mnt echo "LANG=ru_RU.UTF-8" > /etc/locale.conf
+arch-chroot /mnt echo "KEYMAP=ru" > /etc/vconsole.conf
+arch-chroot /mnt echo "FONT=cyr-sun16" >> /etc/vconsole.conf
 echo -n "Enter hostname: "
 read hostname
-echo $hostname > /etc/hostname
-mkinitcpio -P
-passwd
+arch-chroot /mnt echo $hostname > /etc/hostname
+arch-chroot /mnt mkinitcpio -P
+read pass
+echo -n "Enter root password: "
+arch-chroot /mnt passwd < $pass
+
+echo -n "Enter username: "
+read username
+arch-chroot /mnt useradd -m -G wheel -s /bin/bash $username
+echo -n "Enter user password: "
+arch-chroot /mnt passwd $username
 
 #limine bootloader
-pacman -S limine efibootmgr
-mkdir -p /boot/efi/EFI/limine
-cp /usr/share/limine/BOOTX64.EFI /boot/efi/EFI/limine/
+arch-chroot /mnt pacman -S limine efibootmgr
+arch-chroot /mnt mkdir -p /boot/efi/EFI/limine
+arch-chroot /mnt cp /usr/share/limine/BOOTX64.EFI /boot/efi/EFI/limine/
 
-efibootmgr --create --disk $disk --part $part1 --label "Limine" --loader '/EFI/limine/BOOTX64.EFI' --unicode
-cat > /boot/efi/EFI/limine/limine.conf << 'EOF'
+arch-chroot /mnt efibootmgr --create --disk $disk --part $part1 --label "Limine" --loader '/EFI/limine/BOOTX64.EFI' --unicode
+arch-chroot /mnt cat > /boot/efi/EFI/limine/limine.conf << 'EOF'
 timeout: 5
 
 /Arch Linux
     protocol: linux
     path: uuid:/boot/vmlinuz-linux
-    cmdline: root=UUID=uuid rw
+    cmdline: root=UUID=$uuid rw
     module_path: uuid:/boot/initramfs-linux.img
 
 /Windows
     protocol: efi
     path: boot():/EFI/Microsoft/Boot/bootmgfw.efi
 EOF
-cat > /etc/pacman.d/hooks/99-limine.hook << 'EOF'
+arch-chroot /mnt cat > /etc/pacman.d/hooks/99-limine.hook << 'EOF'
 [Trigger]
 Operation = Install
 Operation = Upgrade
