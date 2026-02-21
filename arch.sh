@@ -75,7 +75,7 @@ timeout: 5
     protocol: linux
     path: $uuid:/boot/vmlinuz-linux-zen
     cmdline: root=UUID=$uuid rw
-    module_path: $uuid:/boot/initramfs-linuz-zen.img
+    module_path: $uuid:/boot/initramfs-linux-zen.img
 EOF
 arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook" << EOF
 [Trigger]
