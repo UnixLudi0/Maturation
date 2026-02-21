@@ -10,29 +10,29 @@ echo -e "g\nn\n\n\n+1G\nt\n1\nn\n\n\n\nw\n" | sudo fdisk $disk
 sleep 3
 
 if [[ -e "${disk}p1" ]]; then
-    part1="${disk}p1"
-    part2="${disk}p2"
+    part1="p1"
+    part2="p2"
 else
-    part1="${disk}1"
-    part2="${disk}2"
+    part1="1"
+    part2="2"
 fi
 
-mkfs.fat -F 32 $part1
-mkfs.btrfs -L mylabel $part2
-uuid=$(blkid -s UUID -o value $part2)
+mkfs.fat -F 32 "$disk$part1"
+mkfs.btrfs -L mylabel "$disk$part2"
+uuid=$(blkid -s UUID -o value "$disk$part2")
 
-mount $part2 /mnt
+mount "$disk$part2" /mnt
 cd /mnt
 btrfs subvolume create @
 btrfs subvolume create @home
 cd /
 umount /mnt
 
-mount -o compress=zstd,subvol=@ $part2 /mnt
+mount -o compress=zstd,subvol=@ "$disk$part2" /mnt
 mkdir -p /mnt/home
-mount -o compress=zstd,subvol=@home $part2 /mnt/home
+mount -o compress=zstd,subvol=@home "$disk$part2" /mnt/home
 mkdir -p /mnt/boot/efi
-mount $part1 /mnt/boot/efi
+mount "$disk$part1" /mnt/boot/efi
 
 sudo reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
 pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers nvim
@@ -50,37 +50,33 @@ echo -n "Enter hostname: "
 read hostname
 arch-chroot /mnt echo $hostname > /etc/hostname
 arch-chroot /mnt mkinitcpio -P
-read rootpass
 echo -n "Enter root password: "
-$rootpass > arch-chroot /mnt passwd
+read rootpass
+echo -e "$rootpass\n$rootpass" | arch-chroot /mnt passwd
 
 echo -n "Enter username: "
 read username
-$username > arch-chroot /mnt useradd -m -G wheel -s /bin/bash
+arch-chroot /mnt useradd -m -G wheel -s /bin/bash $username
 echo -n "Enter user password: "
 read userpass
-$userpass > arch-chroot /mnt passwd
+echo -e "$userpass\n$userpass" | arch-chroot /mnt passwd $username
 
 #limine bootloader
 arch-chroot /mnt pacman -S limine efibootmgr
 arch-chroot /mnt mkdir -p /boot/efi/EFI/limine
 arch-chroot /mnt cp /usr/share/limine/BOOTX64.EFI /boot/efi/EFI/limine/
 
-arch-chroot /mnt efibootmgr --create --disk $disk --part $part1 --label "Limine" --loader '/EFI/limine/BOOTX64.EFI' --unicode
-arch-chroot /mnt cat > /boot/efi/EFI/limine/limine.conf << 'EOF'
+arch-chroot /mnt efibootmgr --create --disk $disk --part 1 --label "Limine" --loader '/EFI/limine/BOOTX64.EFI' --unicode
+arch-chroot /mnt cat > /boot/efi/EFI/limine/limine.conf << EOF
 timeout: 5
 
 /Arch Linux
     protocol: linux
-    path: $uuid:/boot/vmlinuz-linux
+    path: $uuid:/boot/vmlinuz-linux-zen
     cmdline: root=UUID=$uuid rw
-    module_path: $uuid:/boot/initramfs-linux.img
-
-/Windows
-    protocol: efi
-    path: boot():/EFI/Microsoft/Boot/bootmgfw.efi
+    module_path: $uuid:/boot/initramfs-linux-zen.img
 EOF
-arch-chroot /mnt cat > /etc/pacman.d/hooks/99-limine.hook << 'EOF'
+arch-chroot /mnt cat > /etc/pacman.d/hooks/99-limine.hook << EOF
 [Trigger]
 Operation = Install
 Operation = Upgrade
@@ -92,3 +88,4 @@ Description = Deploying Limine after upgrade...
 When = PostTransaction
 Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/efi/EFI/limine/
 EOF
+reboot
