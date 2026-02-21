@@ -37,7 +37,6 @@ mount "$disk$part1" /mnt/boot/efi
 sudo reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
 pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers nvim
 genfstab -U /mnt >> /mnt/etc/fstab
-git clone https://github.com/UnixLudi0/Maturation.git /mnt/root
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 arch-chroot /mnt hwclock --systohc
 arch-chroot /mnt sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
@@ -60,6 +59,8 @@ arch-chroot /mnt useradd -m -G wheel -s /bin/bash $username
 echo -n "Enter user password: "
 read userpass
 echo -e "$userpass\n$userpass" | arch-chroot /mnt passwd $username
+arch-chroot /mnt mkdir "/home/$username"
+arch-chroot /mnt git clone https://github.com/UnixLudi0/Maturation "/home/$username/Maturation"
 
 #limine bootloader
 arch-chroot /mnt pacman -S limine efibootmgr
@@ -67,7 +68,7 @@ arch-chroot /mnt mkdir -p /boot/efi/EFI/limine
 arch-chroot /mnt cp /usr/share/limine/BOOTX64.EFI /boot/efi/EFI/limine/
 
 arch-chroot /mnt efibootmgr --create --disk $disk --part 1 --label "Limine" --loader '/EFI/limine/BOOTX64.EFI' --unicode
-arch-chroot /mnt cat > /boot/efi/EFI/limine/limine.conf << EOF
+arch-chroot /mnt bash -c "cat > /boot/efi/EFI/limine/limine.conf" << EOF
 timeout: 5
 
 /Arch Linux
@@ -76,7 +77,7 @@ timeout: 5
     cmdline: root=UUID=$uuid rw
     module_path: $uuid:/boot/initramfs-linux-zen.img
 EOF
-arch-chroot /mnt cat > /etc/pacman.d/hooks/99-limine.hook << EOF
+arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook" << EOF
 [Trigger]
 Operation = Install
 Operation = Upgrade
