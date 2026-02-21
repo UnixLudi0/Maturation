@@ -60,8 +60,8 @@ arch-chroot /mnt useradd -m -G wheel -s /bin/bash $username
 echo -n "Enter user password: "
 read userpass
 echo -e "$userpass\n$userpass" | arch-chroot /mnt passwd $username
-arch-chroot /mnt mkdir "/home/$username"
 arch-chroot /mnt git clone https://github.com/UnixLudi0/Maturation "/home/$username/Maturation"
+arch-chroot /mnt chown -R $username:$username "/home/$username/Maturation"
 
 #limine bootloader
 arch-chroot /mnt pacman -S limine efibootmgr
@@ -74,9 +74,9 @@ timeout: 5
 
 /Arch Linux
     protocol: linux
-    path: $partuuid:/boot/vmlinuz-linux-zen
+    path: uuid($partuuid):/boot/vmlinuz-linux-zen
     cmdline: root=UUID=$uuid rw
-    module_path: $partuuid:/boot/initramfs-linux-zen.img
+    module_path: uuid($partuuid):/boot/initramfs-linux-zen.img
 EOF
 arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook" << EOF
 [Trigger]
