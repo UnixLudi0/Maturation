@@ -34,6 +34,7 @@ mount -o compress=zstd,subvol=@home $part2 /mnt/home
 mkdir -p /mnt/boot/efi
 mount $part1 /mnt/boot/efi
 
+sudo reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
 pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers nvim
 genfstab -U /mnt >> /mnt/etc/fstab
 git clone https://github.com/UnixLudi0/Maturation.git /mnt/root
