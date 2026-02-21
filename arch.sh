@@ -35,7 +35,7 @@ mkdir -p /mnt/boot/efi
 mount "$disk$part1" /mnt/boot/efi
 
 sudo reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
-pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers nvim
+pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers neovim
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 arch-chroot /mnt hwclock --systohc
