@@ -20,6 +20,7 @@ fi
 mkfs.fat -F 32 "$disk$part1"
 mkfs.btrfs -L mylabel "$disk$part2"
 uuid=$(blkid -s UUID -o value "$disk$part2")
+partuuid=$(blkid -s PARTUUID -o value "$disk$part2")
 
 mount "$disk$part2" /mnt
 cd /mnt
@@ -35,7 +36,7 @@ mkdir -p /mnt/boot/efi
 mount "$disk$part1" /mnt/boot/efi
 
 sudo reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
-pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers neovim
+pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers neovim git
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 arch-chroot /mnt hwclock --systohc
@@ -73,9 +74,9 @@ timeout: 5
 
 /Arch Linux
     protocol: linux
-    path: $uuid:/boot/vmlinuz-linux-zen
+    path: $partuuid:/boot/vmlinuz-linux-zen
     cmdline: root=UUID=$uuid rw
-    module_path: $uuid:/boot/initramfs-linux-zen.img
+    module_path: $partuuid:/boot/initramfs-linux-zen.img
 EOF
 arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook" << EOF
 [Trigger]
