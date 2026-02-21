@@ -34,11 +34,7 @@ mount -o compress=zstd,subvol=@home $part2 /mnt/home
 mkdir -p /mnt/boot/efi
 mount $part1 /mnt/boot/efi
 
-curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz
-tar xvf cachyos-repo.tar.xz && cd cachyos-repo
-./cachyos-repo.sh
-
-pacstrap -M -P -c -i /mnt base linux-cachyos cachyos-keyring cachyos-mirrorlist cachyos-v3-mirrorlist
+pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers nvim
 genfstab -U /mnt >> /mnt/etc/fstab
 git clone https://github.com/UnixLudi0/Maturation.git /mnt/root
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime
@@ -53,15 +49,16 @@ echo -n "Enter hostname: "
 read hostname
 arch-chroot /mnt echo $hostname > /etc/hostname
 arch-chroot /mnt mkinitcpio -P
-read pass
+read rootpass
 echo -n "Enter root password: "
-arch-chroot /mnt passwd < $pass
+$rootpass > arch-chroot /mnt passwd
 
 echo -n "Enter username: "
 read username
-arch-chroot /mnt useradd -m -G wheel -s /bin/bash $username
+$username > arch-chroot /mnt useradd -m -G wheel -s /bin/bash
 echo -n "Enter user password: "
-arch-chroot /mnt passwd $username
+read userpass
+$userpass > arch-chroot /mnt passwd
 
 #limine bootloader
 arch-chroot /mnt pacman -S limine efibootmgr
@@ -74,9 +71,9 @@ timeout: 5
 
 /Arch Linux
     protocol: linux
-    path: uuid:/boot/vmlinuz-linux
+    path: $uuid:/boot/vmlinuz-linux
     cmdline: root=UUID=$uuid rw
-    module_path: uuid:/boot/initramfs-linux.img
+    module_path: $uuid:/boot/initramfs-linux.img
 
 /Windows
     protocol: efi
