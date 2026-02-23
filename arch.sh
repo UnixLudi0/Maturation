@@ -67,7 +67,7 @@ arch-chroot /mnt pacman -S limine efibootmgr
 arch-chroot /mnt mkdir -p /boot/EFI/limine
 arch-chroot /mnt cp /usr/share/limine/BOOTX64.EFI /boot/EFI/limine/
 
-arch-chroot /mnt efibootmgr --create --disk $disk --part 1 --label "Limine" --loader '/limine/BOOTX64.EFI' --unicode
+arch-chroot /mnt efibootmgr --create --disk $disk --part 1 --label "Limine" --loader '\EFI\limine\BOOTX64.EFI' --unicode
 arch-chroot /mnt bash -c "cat > /boot/EFI/limine/limine.conf" << EOF
 timeout: 5
 
