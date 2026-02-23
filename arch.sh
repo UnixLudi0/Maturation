@@ -6,7 +6,7 @@ echo -n "Input disk number: "
 read num
 disk="/dev/$(lsblk | grep " disk" | sed -n "${num}p" | awk '{print $1}')"
 echo "Will be used disk: $disk"
-echo -e "g\nn\n\n\n+1G\nt\n1\nn\n\n\n\nw\n" | sudo fdisk $disk
+echo -e "g\nn\n\n\n+5G\nt\n1\nn\n\n\n\nw\n" | sudo fdisk $disk
 sleep 3
 
 if [[ -e "${disk}p1" ]]; then
@@ -20,7 +20,6 @@ fi
 mkfs.fat -F 32 "$disk$part1"
 mkfs.btrfs -L mylabel "$disk$part2"
 uuid=$(blkid -s UUID -o value "$disk$part2")
-partuuid=$(blkid -s PARTUUID -o value "$disk$part2")
 
 mount "$disk$part2" /mnt
 cd /mnt
@@ -33,7 +32,7 @@ mount -o compress=zstd,subvol=@ "$disk$part2" /mnt
 mkdir -p /mnt/home
 mount -o compress=zstd,subvol=@home "$disk$part2" /mnt/home
 mkdir -p /mnt/boot/efi
-mount "$disk$part1" /mnt/boot/efi
+mount "$disk$part1" /mnt/boot
 
 sudo reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
 pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers neovim git
@@ -74,9 +73,9 @@ timeout: 5
 
 /Arch Linux
     protocol: linux
-    path: uuid($partuuid):/boot/vmlinuz-linux-zen
+    path: boot():/vmlinuz-linux-zen
     cmdline: root=UUID=$uuid rw
-    module_path: uuid($partuuid):/boot/initramfs-linux-zen.img
+    module_path: boot():/initramfs-linux-zen.img
 EOF
 arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook" << EOF
 [Trigger]
