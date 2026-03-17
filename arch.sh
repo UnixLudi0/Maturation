@@ -1,13 +1,30 @@
 timedatectl set-ntp true
 
+BITS=$(cat /sys/firmware/efi/fw_platform_size 2>/dev/null)
+if [[ "$BITS" == "32" ]] || [[ "$BITS" == "64" ]]; then
+    FIRMWARE="uefi"
+elif [[ -z "$BITS" ]]; then
+    FIRMWARE="bios"
+else
+    echo -n "Failed to detect firmware. Exit..."
+    exit 1
+fi
+
 echo "Choose disk:"
 lsblk | grep disk | awk '{print NR") "$1}'
 echo -n "Input disk number: "
 read num
 disk="/dev/$(lsblk | grep " disk" | sed -n "${num}p" | awk '{print $1}')"
 echo "Will be used disk: $disk"
-echo -e "g\nn\n\n\n+5G\nt\n1\nn\n\n\n\nw\n" | fdisk $disk
-sleep 3
+
+if [[ "$FIRMWARE" == "uefi" ]]; then
+    echo -e "g\nn\n\n\n+5G\nt\n1\nn\n\n\n\nw\n" | fdisk $disk
+    sleep 3
+fi
+if [[ "$FIRMWARE" == "bios" ]]; then
+    echo -e 'o\nn\np\n1\n\n+1G\na\nn\np\n2\n\n\nw' | sudo fdisk $disk
+    sleep 3
+fi
 
 if [[ -e "${disk}p1" ]]; then
     part1="p1"
@@ -18,7 +35,7 @@ else
 fi
 
 mkfs.fat -F 32 "$disk$part1"
-mkfs.btrfs -L mylabel "$disk$part2"
+mkfs.btrfs -f -L btrfs "$disk$part2"
 uuid=$(blkid -s UUID -o value "$disk$part2")
 
 mount "$disk$part2" /mnt
@@ -34,9 +51,9 @@ mount -o compress=zstd,subvol=@home "$disk$part2" /mnt/home
 mkdir -p /mnt/boot
 mount "$disk$part1" /mnt/boot
 
-sudo reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
+reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
 pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers neovim git kbd btrfs-progs
-genfstab -U /mnt >> /mnt/etc/fstab
+genfstab -U -L /mnt >> /mnt/etc/fstab
 arch-chroot /mnt bash -c 'ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime'
 arch-chroot /mnt bash -c 'hwclock --systohc'
 arch-chroot /mnt bash -c "sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen"
@@ -66,7 +83,40 @@ arch-chroot /mnt bash -c "chown -R $username:$username /home/$username/Maturatio
 #limine bootloader
 arch-chroot /mnt bash -c 'pacman -S --noconfirm limine efibootmgr'
 mkdir -p /mnt/boot/limine
-arch-chroot /mnt bash -c 'cp /usr/share/limine/BOOTX64.EFI /boot/limine/'
+
+if [[ "$FIRMWARE" == "uefi" ]]; then
+    arch-chroot /mnt bash -c 'cp /usr/share/limine/BOOTX64.EFI /boot/limine/'
+    arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook" << EOF
+    [Trigger]
+    Operation = Install
+    Operation = Upgrade
+    Type = Package
+    Target = limine              
+
+    [Action]
+    Description = Deploying Limine after upgrade...
+    When = PostTransaction
+    Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/limine/
+    EOF
+fi
+if [[ "$FIRMWARE" == "bios" ]]; then
+    arch-chroot /mnt bash -c 'cp /usr/share/limine/limine-bios.sys /boot/limine/'
+    arch-chroot /mnt bash -c "limine bios-install $disk"
+    arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook" << EOF
+    [Trigger]
+    Operation = Install
+    Operation = Upgrade
+    Type = Package
+    Target = limine              
+    
+    [Action]
+    Description = Deploying Limine after upgrade...
+    When = PostTransaction
+    Exec = /bin/sh -c "/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/"
+    EOF
+fi
+
+
 
 arch-chroot /mnt bash -c "efibootmgr --create --disk $disk --part 1 --label 'Limine' --loader '\limine\BOOTX64.EFI' --unicode"
 arch-chroot /mnt bash -c "cat > /boot/limine/limine.conf" << EOF
@@ -77,17 +127,5 @@ timeout: 5
     path: boot():/vmlinuz-linux-zen
     cmdline: root=UUID=$uuid rw rootflags=subvol=@
     module_path: boot():/initramfs-linux-zen.img
-EOF
-arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook" << EOF
-[Trigger]
-Operation = Install
-Operation = Upgrade
-Type = Package
-Target = limine              
-
-[Action]
-Description = Deploying Limine after upgrade...
-When = PostTransaction
-Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/limine/
 EOF
 reboot
