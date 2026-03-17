@@ -11,18 +11,19 @@ else
 fi
 
 echo "Choose disk:"
-lsblk | grep disk | awk '{print NR") "$1}'
+lsblk -dn -o NAME,TYPE | awk '$2=="disk"{print NR") "$1}'
 echo -n "Input disk number: "
 read num
-disk="/dev/$(lsblk | grep " disk" | sed -n "${num}p" | awk '{print $1}')"
+[[ "$num" =~ ^[0-9]+$ ]] || { echo "Invalid input"; exit 1; }
+disk="/dev/$(lsblk -dn -o NAME,TYPE | awk '$2=="disk"{print $1}' | sed -n "${num}p")"
 echo "Will be used disk: $disk"
 
 if [[ "$FIRMWARE" == "uefi" ]]; then
-    echo -e "g\nn\n\n\n+5G\nt\n1\nn\n\n\n\nw\n" | fdisk $disk
+    echo -e "g\nn\n\n\n+5G\nt\n1\nn\n\n\n\nw\n" | fdisk "$disk"
     sleep 3
 fi
 if [[ "$FIRMWARE" == "bios" ]]; then
-    echo -e 'o\nn\np\n1\n\n+1G\na\nn\np\n2\n\n\nw' | sudo fdisk $disk
+    echo -e 'o\nn\np\n1\n\n+1G\na\nn\np\n2\n\n\nw' | fdisk "$disk"
     sleep 3
 fi
 
@@ -64,7 +65,7 @@ arch-chroot /mnt bash -c 'echo "KEYMAP=ru" > /etc/vconsole.conf'
 arch-chroot /mnt bash -c 'echo "FONT=cyr-sun16" >> /etc/vconsole.conf'
 echo -n "Enter hostname: "
 read hostname
-arch-chroot /mnt bash -c "echo $hostname > /etc/hostname"
+arch-chroot /mnt bash -c "echo \"$hostname\" > /etc/hostname"
 arch-chroot /mnt bash -c 'mkinitcpio -P'
 echo -n "Enter root password: "
 read rootpass
@@ -72,8 +73,8 @@ echo -e "$rootpass\n$rootpass" | arch-chroot /mnt passwd
 
 echo -n "Enter username: "
 read username
-arch-chroot /mnt bash -c "useradd -m -G wheel -s /bin/bash $username"
-arch-chroot /mnt bash -c "echo '$username ALL=(ALL:ALL) ALL' >> /etc/sudoers"
+arch-chroot /mnt bash -c "useradd -m -G wheel -s /bin/bash \"$username\""
+arch-chroot /mnt bash -c "echo \"$username ALL=(ALL:ALL) ALL\" | EDITOR='tee -a' visudo"
 echo -n "Enter user password: "
 read userpass
 echo -e "$userpass\n$userpass" | arch-chroot /mnt passwd $username
@@ -86,7 +87,7 @@ mkdir -p /mnt/boot/limine
 
 if [[ "$FIRMWARE" == "uefi" ]]; then
     arch-chroot /mnt bash -c 'cp /usr/share/limine/BOOTX64.EFI /boot/limine/'
-    arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook" << EOF
+    arch-chroot /mnt bash -c 'cat > /etc/pacman.d/hooks/99-limine.hook << "EOF"
     [Trigger]
     Operation = Install
     Operation = Upgrade
@@ -97,12 +98,14 @@ if [[ "$FIRMWARE" == "uefi" ]]; then
     Description = Deploying Limine after upgrade...
     When = PostTransaction
     Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/limine/
-    EOF
+    EOF'
+    arch-chroot /mnt bash -c "efibootmgr --create --disk $disk --part 1 --label 'Limine' --loader '\limine\BOOTX64.EFI' --unicode"
 fi
+
 if [[ "$FIRMWARE" == "bios" ]]; then
     arch-chroot /mnt bash -c 'cp /usr/share/limine/limine-bios.sys /boot/limine/'
-    arch-chroot /mnt bash -c "limine bios-install $disk"
-    arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook" << EOF
+    arch-chroot /mnt bash -c "limine bios-install \"$disk\""
+    arch-chroot /mnt bash -c 'cat > /etc/pacman.d/hooks/99-limine.hook << "EOF"
     [Trigger]
     Operation = Install
     Operation = Upgrade
@@ -113,12 +116,9 @@ if [[ "$FIRMWARE" == "bios" ]]; then
     Description = Deploying Limine after upgrade...
     When = PostTransaction
     Exec = /bin/sh -c "/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/"
-    EOF
+    EOF'
 fi
 
-
-
-arch-chroot /mnt bash -c "efibootmgr --create --disk $disk --part 1 --label 'Limine' --loader '\limine\BOOTX64.EFI' --unicode"
 arch-chroot /mnt bash -c "cat > /boot/limine/limine.conf" << EOF
 timeout: 5
 
