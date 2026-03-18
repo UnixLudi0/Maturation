@@ -49,16 +49,16 @@ Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](ht
     - [x] Install support for UEFI/GPT
     - [ ] Install support for BIOS/MBR
     - [x] Select disk
-	  - [x] Btrfs filesystem, @ and @home subvolumes
-	  - [x] Find the fasters mirrors to download base packages with reflector
-	  - [x] Install base packages. Base, systemd, linux-zen, linux-firmware, btrfs-progs
-	  - [ ] Select timezone
-	  - [ ] Select locales
+    - [x] Btrfs filesystem, @ and @home subvolumes
+    - [x] Find the fasters mirrors to download base packages with reflector
+    - [x] Install base packages. Base, systemd, linux-zen, linux-firmware, btrfs-progs
+    - [ ] Select timezone
+    - [ ] Select locales
     - [x] Input hostname
     - [x] Input root password
     - [x] Input username and password. Also is sudo user
-	  - [x] Install Limine bootloader
-	  - [x] Copy repository to installed system
+    - [x] Install Limine bootloader
+    - [x] Copy repository to installed system
   - [ ] install.sh
     - [x] Contains all available scripts for choosing
 	- [ ] config.sh
@@ -70,22 +70,18 @@ Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](ht
 	- [ ] base.sh
 		- [x] update keyrings
 		- [x] add extra repositories
-		- [x]  mirrors update with reflector
+		- [x] mirrors update with reflector
 		- [x] packet manager settings(parallel download and timeouts)
 		- [x] install basic packages (microcode, git, base-devel, other firmware modules) 
 		- [x] Install and set GPU drivers (Nvidia, AMD, Intel)
-	- [ ] hyprland.sh
-		- [ ] Wayland and other dependies 
-		- [x] Hyprland Ecosystem
-		- [ ] Hyprland config based on hardware
-		- [ ] Theme
-		- [ ] Icons
-		- [ ] Cursor
-	- [ ] apps.sh
+	- [ ] packages.sh
 		- [x] install required packages
+		- [ ] custom nvim config
+		- [ ] custom obsidian config
+		- [ ] install firejail
 		- [ ] safe current config
 		- [ ] copy config files
-	- [ ] apps-extra.sh 
+	- [ ] packages_extra.sh 
 		- [ ] Davinci Resolve
 		- [ ] Xray
 	- [ ] wine.sh
@@ -105,6 +101,7 @@ Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](ht
 		- [ ] monitor overclock
 		- [ ] kernel settings
   - [ ] uninstall.sh
+    - [ ] Remove dotfiles
 - [ ] Project Wiki
   - [ ] Cheatsheet of custom mangowc key bindings
   - [ ] Cheatsheet of custom nvim key bindings
