@@ -43,21 +43,31 @@ Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](ht
 | zram                     | zram-generator              |
 | Cleaner                  | Bleachbit                   |
 
-TODO List:
-Scripts:
-- [ ] arch.sh
-	- [ ] Btrfs
-	- [ ] SystemD
-	- [ ] Limine
-	- [x] Copy repository to installed system
-- [ ] install.sh
+## TODO List
+- [ ] Scripts
+  - [ ] arch.sh
+    - [x] Install support for UEFI/GPT
+    - [ ] Install support for BIOS/MBR
+    - [x] Select disk
+	  - [x] Btrfs filesystem, @ and @home subvolumes
+	  - [x] Find the fasters mirrors to download base packages with reflector
+	  - [x] Install base packages. Base, systemd, linux-zen, linux-firmware, btrfs-progs
+	  - [ ] Select timezone
+	  - [ ] Select locales
+    - [x] Input hostname
+    - [x] Input root password
+    - [x] Input username and password. Also is sudo user
+	  - [x] Install Limine bootloader
+	  - [x] Copy repository to installed system
+  - [ ] install.sh
+    - [x] Contains all available scripts for choosing
 	- [ ] config.sh
 		- [x] Root Directory
 		- [x] Language
 		- [x] CPU
 		- [x] GPU
 		- [x] Disk
-	 - [ ] base.sh
+	- [ ] base.sh
 		- [x] update keyrings
 		- [x] add extra repositories
 		- [x]  mirrors update with reflector
@@ -94,7 +104,10 @@ Scripts:
 		- [ ] disc prevention
 		- [ ] monitor overclock
 		- [ ] kernel settings
-- [ ] uninstall.sh
+  - [ ] uninstall.sh
+- [ ] Project Wiki
+  - [ ] Cheatsheet of custom mangowc key bindings
+  - [ ] Cheatsheet of custom nvim key bindings
 
 - [ ] Configure every app
 - [ ] Configure themes and icons

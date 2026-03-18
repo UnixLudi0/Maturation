@@ -20,11 +20,11 @@ echo "Will be used disk: $disk"
 
 if [[ "$FIRMWARE" == "uefi" ]]; then
     echo -e "g\nn\n\n\n+5G\nt\n1\nn\n\n\n\nw\n" | fdisk "$disk"
-    sleep 3
+    partprobe "$disk"
 fi
 if [[ "$FIRMWARE" == "bios" ]]; then
     echo -e 'o\nn\np\n1\n\n+1G\na\nn\np\n2\n\n\nw' | fdisk "$disk"
-    sleep 3
+    partprobe "$disk"
 fi
 
 if [[ -e "${disk}p1" ]]; then
@@ -52,16 +52,17 @@ mount -o compress=zstd,subvol=@home "$disk$part2" /mnt/home
 mkdir -p /mnt/boot
 mount "$disk$part1" /mnt/boot
 
+pacman -Sy --noconfirm reflector
 reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
 pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers neovim git kbd btrfs-progs
-genfstab -U -L /mnt >> /mnt/etc/fstab
+genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt bash -c 'ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime'
 arch-chroot /mnt bash -c 'hwclock --systohc'
-arch-chroot /mnt bash -c "sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen"
-arch-chroot /mnt bash -c "sed -i 's/#ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen"
+arch-chroot /mnt bash -c "sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen"
+arch-chroot /mnt bash -c "sed -i 's/^#ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen"
 arch-chroot /mnt bash -c 'locale-gen'
 arch-chroot /mnt bash -c 'echo "LANG=ru_RU.UTF-8" > /etc/locale.conf'
-arch-chroot /mnt bash -c 'echo "KEYMAP=ru" > /etc/vconsole.conf'
+arch-chroot /mnt bash -c 'echo "KEYMAP=ru" >> /etc/vconsole.conf'
 arch-chroot /mnt bash -c 'echo "FONT=cyr-sun16" >> /etc/vconsole.conf'
 echo -n "Enter hostname: "
 read hostname
@@ -78,12 +79,11 @@ arch-chroot /mnt bash -c "echo \"$username ALL=(ALL:ALL) ALL\" | EDITOR='tee -a'
 echo -n "Enter user password: "
 read userpass
 echo -e "$userpass\n$userpass" | arch-chroot /mnt passwd $username
-arch-chroot /mnt bash -c "git clone https://github.com/UnixLudi0/Maturation /home/$username/Maturation"
-arch-chroot /mnt bash -c "chown -R $username:$username /home/$username/Maturation"
 
 #limine bootloader
 arch-chroot /mnt bash -c 'pacman -S --noconfirm limine efibootmgr'
 mkdir -p /mnt/boot/limine
+mkdir -p /etc/pacman.d/hooks
 
 if [[ "$FIRMWARE" == "uefi" ]]; then
     arch-chroot /mnt bash -c 'cp /usr/share/limine/BOOTX64.EFI /boot/limine/'
@@ -128,4 +128,6 @@ timeout: 5
     cmdline: root=UUID=$uuid rw rootflags=subvol=@
     module_path: boot():/initramfs-linux-zen.img
 EOF
+arch-chroot /mnt bash -c "git clone https://github.com/UnixLudi0/Maturation /home/$username/Maturation"
+arch-chroot /mnt bash -c "chown -R $username:$username /home/$username/Maturation"
 reboot
