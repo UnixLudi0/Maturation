@@ -54,7 +54,7 @@ mount "$disk$part1" /mnt/boot
 
 pacman -Sy --noconfirm reflector
 reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
-pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers neovim git kbd btrfs-progs
+pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers neovim git kbd btrfs-progs networkmanager
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt bash -c 'ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime'
 arch-chroot /mnt bash -c 'hwclock --systohc'
@@ -119,7 +119,7 @@ if [[ "$FIRMWARE" == "bios" ]]; then
     EOF'
 fi
 
-arch-chroot /mnt bash -c "cat > /boot/limine/limine.conf" << EOF
+arch-chroot /mnt bash -c 'cat > /boot/limine/limine.conf << "EOF"
 timeout: 5
 
 /Arch Linux
@@ -127,7 +127,7 @@ timeout: 5
     path: boot():/vmlinuz-linux-zen
     cmdline: root=UUID=$uuid rw rootflags=subvol=@
     module_path: boot():/initramfs-linux-zen.img
-EOF
+EOF'
 arch-chroot /mnt bash -c "git clone https://github.com/UnixLudi0/Maturation /home/$username/Maturation"
 arch-chroot /mnt bash -c "chown -R $username:$username /home/$username/Maturation"
 reboot
