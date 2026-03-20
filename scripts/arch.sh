@@ -11,7 +11,7 @@ else
 fi
 
 echo "Choose disk:"
-lsblk -dn -o NAME,TYPE | awk '$2=="disk"{print NR") "$1}'
+lsblk -dn -o NAME,TYPE | awk '$2=="disk" {count++; print count") "$1}'
 echo -n "Input disk number: "
 read num
 [[ "$num" =~ ^[0-9]+$ ]] || { echo "Invalid input"; exit 1; }
