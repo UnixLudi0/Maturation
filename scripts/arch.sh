@@ -101,18 +101,20 @@ mkdir -p /mnt/boot/EFI/BOOT
 if [[ "$FIRMWARE" == "uefi" ]]; then
     arch-chroot /mnt bash -c 'cp /usr/share/limine/BOOTX64.EFI /boot/limine/'
     arch-chroot /mnt bash -c 'cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/'
-    arch-chroot /mnt bash -c 'cat > /etc/pacman.d/hooks/99-limine.hook << "EOF"
+    
+
+    arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook << 'EOF'
     [Trigger]
     Operation = Install
     Operation = Upgrade
     Type = Package
-    Target = limine              
+    Target = limine
 
     [Action]
     Description = Deploying Limine after upgrade...
     When = PostTransaction
-    Exec = /bin/sh -c "/usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/limine/ && /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/"
-    EOF'
+    Exec = /bin/sh -c '/usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/limine/ && /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/'
+    EOF"
     arch-chroot /mnt bash -c "efibootmgr --create --disk $disk --part 1 --label 'Limine' --loader '\limine\BOOTX64.EFI' --unicode"
 fi
 
