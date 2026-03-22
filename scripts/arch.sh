@@ -102,17 +102,17 @@ if [[ "$FIRMWARE" == "uefi" ]]; then
     arch-chroot /mnt bash -c 'cp /usr/share/limine/BOOTX64.EFI /boot/limine/'
     arch-chroot /mnt bash -c 'cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/'
     arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook << 'EOF'
-    [Trigger]
-    Operation = Install
-    Operation = Upgrade
-    Type = Package
-    Target = limine
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
 
-    [Action]
-    Description = Deploying Limine after upgrade...
-    When = PostTransaction
-    Exec = /bin/sh -c '/usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/limine/ && /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/'
-    EOF"
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+Exec = /bin/sh -c '/usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/limine/ && /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/'
+EOF"
     arch-chroot /mnt bash -c "efibootmgr --create --disk $disk --part 1 --label 'Limine' --loader '\limine\BOOTX64.EFI' --unicode"
 fi
 
@@ -120,17 +120,17 @@ if [[ "$FIRMWARE" == "bios" ]]; then
     arch-chroot /mnt bash -c 'cp /usr/share/limine/limine-bios.sys /boot/limine/'
     arch-chroot /mnt bash -c "limine bios-install \"$disk\""
     arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook << 'EOF'
-    [Trigger]
-    Operation = Install
-    Operation = Upgrade
-    Type = Package
-    Target = limine
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
 
-    [Action]
-    Description = Deploying Limine after upgrade...
-    When = PostTransaction
-    Exec = /bin/sh -c '/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/'
-    EOF"
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+Exec = /bin/sh -c '/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/'
+EOF"
 fi
 
 arch-chroot /mnt bash -c "cat > /boot/limine/limine.conf << EOF
