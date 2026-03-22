@@ -101,8 +101,6 @@ mkdir -p /mnt/boot/EFI/BOOT
 if [[ "$FIRMWARE" == "uefi" ]]; then
     arch-chroot /mnt bash -c 'cp /usr/share/limine/BOOTX64.EFI /boot/limine/'
     arch-chroot /mnt bash -c 'cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/'
-    
-
     arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook << 'EOF'
     [Trigger]
     Operation = Install
@@ -121,18 +119,18 @@ fi
 if [[ "$FIRMWARE" == "bios" ]]; then
     arch-chroot /mnt bash -c 'cp /usr/share/limine/limine-bios.sys /boot/limine/'
     arch-chroot /mnt bash -c "limine bios-install \"$disk\""
-    arch-chroot /mnt bash -c 'cat > /etc/pacman.d/hooks/99-limine.hook << "EOF"
+    arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook << 'EOF'
     [Trigger]
     Operation = Install
     Operation = Upgrade
     Type = Package
-    Target = limine              
-    
+    Target = limine
+
     [Action]
     Description = Deploying Limine after upgrade...
     When = PostTransaction
-    Exec = /bin/sh -c "/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/"
-    EOF'
+    Exec = /bin/sh -c '/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/'
+    EOF"
 fi
 
 arch-chroot /mnt bash -c "cat > /boot/limine/limine.conf << EOF
