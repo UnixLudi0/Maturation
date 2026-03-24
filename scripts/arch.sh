@@ -62,6 +62,8 @@ mount "$disk$part1" /mnt/boot
 
 pacman -Sy --noconfirm reflector
 reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
+arch-chroot /mnt bash -c 'echo "KEYMAP=ru" >> /etc/vconsole.conf'
+arch-chroot /mnt bash -c 'echo "FONT=cyr-sun16" >> /etc/vconsole.conf'
 pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers neovim git kbd btrfs-progs networkmanager
 genfstab -U /mnt > /mnt/etc/fstab
 arch-chroot /mnt bash -c 'ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime'
@@ -70,8 +72,6 @@ arch-chroot /mnt bash -c "sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc
 arch-chroot /mnt bash -c "sed -i 's/^#ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen"
 arch-chroot /mnt bash -c 'locale-gen'
 arch-chroot /mnt bash -c 'echo "LANG=ru_RU.UTF-8" > /etc/locale.conf'
-arch-chroot /mnt bash -c 'echo "KEYMAP=ru" >> /etc/vconsole.conf'
-arch-chroot /mnt bash -c 'echo "FONT=cyr-sun16" >> /etc/vconsole.conf'
 arch-chroot /mnt bash -c 'systemctl enable NetworkManager'
 echo -n "Enter hostname: "
 read hostname
