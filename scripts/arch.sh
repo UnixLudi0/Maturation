@@ -1,4 +1,6 @@
 set -euxo pipefail
+mkdir -p logs
+exec 2> logs/arch.sh.log
 
 timedatectl set-ntp true
 
