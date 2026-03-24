@@ -1,7 +1,6 @@
-set -euxo pipefail
 mkdir -p logs
 exec 2> logs/arch.sh.log
-
+set -euxo pipefail
 timedatectl set-ntp true
 
 if [ -d /sys/firmware/efi ]; then
