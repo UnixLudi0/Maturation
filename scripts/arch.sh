@@ -1,15 +1,11 @@
-set -euo pipefail
+set -euxo pipefail
 
 timedatectl set-ntp true
 
-BITS=$(cat /sys/firmware/efi/fw_platform_size 2>/dev/null)
-if [[ "$BITS" == "32" ]] || [[ "$BITS" == "64" ]]; then
+if [ -d /sys/firmware/efi ]; then
     FIRMWARE="uefi"
-elif [[ -z "$BITS" ]]; then
-    FIRMWARE="bios"
 else
-    echo -n "Failed to detect firmware. Exit..."
-    exit 1
+    FIRMWARE="bios"
 fi
 
 echo "Choose disk:"
