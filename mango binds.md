@@ -43,3 +43,41 @@ aliases:
 | bind         | super+j       | resize window to down          |         |
 | bind         | super+k       | resize window to up            |         |
 | bind         | super+l       | resize window to right         |         |
+# Test 1
+## Default
+
+| type of bind | Bind           | action                          | comment                    |
+| ------------ | -------------- | ------------------------------- | -------------------------- |
+| bind         | super+w        | change `keymode`                |                            |
+| bind         | alt+shift+h    | switch focus to left monitor    |                            |
+| bind         | alt+shift+l    | switch focus to right monitor   |                            |
+| bind         | alt+shift+k    | switch focus to top monitor     |                            |
+| bind         | alt+shift+j    | switch window to bottom monitor |                            |
+| bind         | alt+h          | switch window to left monitor   | // special(?)              |
+| bind         | alt+l          | switch window to right monitor  | // special(?)              |
+| bind         | alt+k          | switch window to top monitor    | // special(?)              |
+| bind         | alt+j          | switch window to bottom monitor | // special(?)              |
+| mousebind    | None, btn_left | `toggleoverview 1`              | не работает по-моему       |
+| mousebind    | None, btn_left | `toggleoverview 0`              | не работает по-моему       |
+| axisbind     | super+up       | viewtoleft_have_client          | переключает на окно влево  |
+| axisbind     | super+down     | viewtoright_have_client         | переключает на окно вправо |
+## Special
+| type of bind | Bind      | action                         | comment |
+| ------------ | --------- | ------------------------------ | ------- |
+| bind         | super+w   | change `keymode`               |         |
+| bind         | super+x   | set tile `layout`              |         |
+| bind         | alt+x     | set vertical tile `layout`     |         |
+| bind         | super+c   | set center tile `layout`       |         |
+| bind         | super+t   | set right tile `layout`        |         |
+| bind         | super+s   | set scroller `layout`          |         |
+| bind         | alt+s     | set vertical scroller `layout` |         |
+| bind         | super+a   | set monocle `layout`           |         |
+| bind         | super+tab | set grid `layout`              |         |
+| bind         | alt+tab   | set vertical grid `layout`     |         |
+| bind         | super+d   | set deck `layout`              |         |
+| bind         | alt+d     | set vertical deck `layout`     |         |
+| bind         | super+e   | set tgmix `layout`             |         |
+| bind         | super+h   | resize window to left          |         |
+| bind         | super+j   | resize window to down          |         |
+| bind         | super+k   | resize window to up            |         |
+| bind         | super+l   | resize window to right         |         |
