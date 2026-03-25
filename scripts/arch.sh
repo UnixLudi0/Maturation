@@ -62,8 +62,9 @@ mount "$disk$part1" /mnt/boot
 
 pacman -Sy --noconfirm reflector
 reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
-arch-chroot /mnt bash -c 'echo "KEYMAP=ru" >> /etc/vconsole.conf'
-arch-chroot /mnt bash -c 'echo "FONT=cyr-sun16" >> /etc/vconsole.conf'
+mkdir -p /mnt/etc
+echo "KEYMAP=ru" >> /mnt/etc/vconsole.conf
+echo "FONT=cyr-sun16" >> /mnt/etc/vconsole.conf
 pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers neovim git kbd btrfs-progs networkmanager
 genfstab -U /mnt > /mnt/etc/fstab
 arch-chroot /mnt bash -c 'ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime'
