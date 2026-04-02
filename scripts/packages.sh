@@ -1,5 +1,5 @@
 yay -S --nocnfirm wireplumber libgtop bluez bluez-utils networkmanager dart-sass upower gvfs gtksourceview3 libsoup3
-yay -S --noconfirm mangowc-git
+yay -S --noconfirm mangowm-git
 yay -S --noconfirm xdg-desktop-portal-wlr
 yay -S --noconfirm waybar
 yay -S --noconfirm wl-clip-persist

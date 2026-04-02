@@ -2,14 +2,14 @@
 
 source scripts/config.sh
 
-options=("Установить Arch Linux" "Редактировать конфиг" "Базовая настройка" "Установка прикладных программ" "Установка продвинутых программ" "WINE" "Оптимизация" "Удаление Hyprland и прикладных программ" "Выход")
+options=("Установить Arch Linux" "Редактировать конфиг" "Базовая настройка" "Установка прикладных программ" "Установка продвинутых программ" "WINE" "Оптимизация" "Удаление настроек и прикладных программ" "Выход")
 clear
 echo "=== ГЛАВНОЕ МЕНЮ УСТАНОВКИ ==="
 select opt in "${options[@]}"; do
     case $opt in
         "Установить Arch Linux")
             #echo "Запуск arch.txt..."
-            #sudo bash ./arch.txt
+            sudo bash scripts/arch.sh
             ;;
         "Редактировать конфиг")
             echo "Запуск config.sh..."
@@ -21,11 +21,11 @@ select opt in "${options[@]}"; do
             ;;
         "Установка прикладных программ")
             echo "Запуск apps.sh..."
-            source scripts/apps.sh
+            source scripts/packages.sh
             ;;
         "Установка продвинутых программ")
             echo "Запуск apps-extra.sh..."
-            source scripts/apps-extra.sh
+            source scripts/packages_extra.sh
             ;;
         "WINE")
             echo "Запуск wine.sh..."
@@ -35,7 +35,7 @@ select opt in "${options[@]}"; do
             echo "Запуск optimization.sh..."
             source scripts/optimization.sh
             ;;
-        "Удаление Hyprland и прикладных программ")
+        "Удаление настроек и прикладных программ")
             echo "Запуск скрипта удаления..."
             source uninstall.sh
             ;;

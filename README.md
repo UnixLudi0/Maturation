@@ -1,5 +1,5 @@
 # Maturation
-My personal ricing of [MangoWC](https://mangowc.vercel.app) using ARU and CachyOS optimization.
+My personal ricing of [MangoWM](https://mangowc.vercel.app) using ARU and CachyOS optimization.
 This project aims to bring optimization, integration, candy-eye to your desktop.
 This project is in passive development.
 Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](https://ventureo.codeberg.page) and [CachyOS](https://cachyos.org/), especially the [wiki](https://wiki.cachyos.org/)
@@ -44,65 +44,68 @@ Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](ht
 | Cleaner                  | Bleachbit                   |
 
 ## TODO List
-- [ ] Scripts
-  - [ ] arch.sh
-    - [x] Install support for UEFI/GPT
-    - [ ] Install support for BIOS/MBR
-    - [x] Select disk
-    - [x] Btrfs filesystem, @ and @home subvolumes
-    - [x] Find the fasters mirrors to download base packages with reflector
-    - [x] Install base packages. Base, systemd, linux-zen, linux-firmware, btrfs-progs
-    - [ ] Select timezone
-    - [ ] Select locales
-    - [x] Input hostname
-    - [x] Input root password
-    - [x] Input username and password. Also is sudo user
-    - [x] Install Limine bootloader
-    - [x] Copy repository to installed system
-  - [ ] install.sh
-    - [x] Contains all available scripts for choosing
-	- [ ] config.sh
-		- [x] Root Directory
-		- [x] Language
-		- [x] CPU
-		- [x] GPU
-		- [x] Disk
-	- [ ] base.sh
-		- [x] update keyrings
-		- [x] add extra repositories
-		- [x] mirrors update with reflector
-		- [x] packet manager settings(parallel download and timeouts)
-		- [x] install basic packages (microcode, git, base-devel, other firmware modules) 
-		- [x] Install and set GPU drivers (Nvidia, AMD, Intel)
-	- [ ] packages.sh
-		- [x] install required packages
-		- [ ] custom nvim config
-		- [ ] custom obsidian config
-		- [ ] install firejail
-		- [ ] safe current config
-		- [ ] copy config files
-	- [ ] packages_extra.sh 
-		- [ ] Davinci Resolve
-		- [ ] Xray
-	- [ ] wine.sh
-		- [ ] Proton GE
-	- [ ] optimization.sh
-		- [x] decrease booting time (initramfs)
-		- [x] zram-generator
-		- [x] earlyoom
-		- [x] ananicy cpp
-		- [x] irqbalance
-		- [ ] compilation flags
-		- [ ] tmpfs
-		- [ ] ccache
-		- [ ] clang
-		- [ ] pipewire
-		- [ ] disc prevention
-		- [ ] monitor overclock
-		- [ ] kernel settings
-  - [ ] uninstall.sh
+### Scripts
+- [ ] install.sh Start Maturation install
+  - [x] Contains all available scripts for choosing
+  - [x] Autostart config.sh
+- [ ] uninstall.sh Remove Maturation dotfiles
     - [ ] Remove dotfiles
-- [ ] Project Wiki
+- [ ] arch.sh Base Arch Linux install with BTRFS and Limine bootloader
+  - [x] Install support for UEFI/GPT
+  - [ ] Install support for BIOS/MBR
+  - [x] Select disk
+  - [x] Btrfs filesystem, @ and @home subvolumes
+  - [x] Find the fasters mirrors to download base packages with reflector
+  - [x] Install base packages. Base, systemd, linux-zen, linux-firmware, btrfs-progs
+  - [ ] Select timezone
+  - [ ] Select locales
+  - [x] Input hostname
+  - [x] Input root password
+  - [x] Input username and password. Also is sudo user
+  - [x] Install Limine bootloader
+  - [x] Copy repository to installed system
+- [ ] config.sh Collect information about device
+	- [x] Root Directory
+	- [x] Language
+	- [x] CPU
+	- [x] GPU
+	- [x] Disk
+- [ ] base.sh
+	- [x] update keyrings
+	- [x] add extra repositories
+	- [x] mirrors update with reflector
+	- [x] packet manager settings(parallel download and timeouts)
+	- [x] install basic packages (microcode, git, base-devel, other firmware modules) 
+	- [x] Install and set GPU drivers (Nvidia, AMD, Intel)
+- [ ] packages.sh
+	- [x] install required packages
+	- [ ] custom nvim config
+	- [ ] custom obsidian config
+	- [ ] install firejail
+	- [ ] safe current config
+	- [ ] copy config files
+- [ ] packages_extra.sh 
+	- [ ] Davinci Resolve
+	- [ ] Xray
+- [ ] wine.sh
+	- [ ] Proton GE
+- [ ] optimization.sh
+	- [x] decrease booting time (initramfs)
+	- [x] zram-generator
+	- [x] earlyoom
+	- [x] ananicy cpp
+	- [x] irqbalance
+	- [ ] compilation flags
+	- [ ] tmpfs
+	- [ ] ccache
+	- [ ] clang
+	- [ ] pipewire
+	- [ ] disc prevention
+	- [ ] monitor overclock
+	- [ ] kernel settings
+- [ ] uninstall.sh
+    - [ ] Remove dotfiles
+### Project Wiki
   - [ ] Cheatsheet of custom mangowc key bindings
   - [ ] Cheatsheet of custom nvim key bindings
 

@@ -3,12 +3,14 @@ exec 2> logs/arch.sh.log
 set -euxo pipefail
 timedatectl set-ntp true
 
+#firmware detection
 if [ -d /sys/firmware/efi ]; then
     FIRMWARE="uefi"
 else
     FIRMWARE="bios"
 fi
 
+#disk selection
 echo "Choose disk:"
 lsblk -dn -o NAME,TYPE | awk '$2=="disk" {count++; print count") "$1}'
 echo "All data on selected disk will be wiped!"
@@ -47,6 +49,7 @@ if [[ -z "$uuid" ]]; then
     exit 1
 fi
 
+#mount
 mount "$disk$part2" /mnt
 cd /mnt
 btrfs subvolume create @
@@ -60,12 +63,13 @@ mount -o compress=zstd,subvol=@home "$disk$part2" /mnt/home
 mkdir -p /mnt/boot
 mount "$disk$part1" /mnt/boot
 
+#base system
 pacman -Sy --noconfirm reflector
 reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
 mkdir -p /mnt/etc
 echo "KEYMAP=ru" >> /mnt/etc/vconsole.conf
 echo "FONT=cyr-sun16" >> /mnt/etc/vconsole.conf
-pacstrap -K /mnt base base-devel linux-firmware linux-zen linux-zen-headers neovim git kbd btrfs-progs networkmanager
+pacstrap -K /mnt base linux-firmware kbd btrfs-progs networkmanager
 genfstab -U /mnt > /mnt/etc/fstab
 arch-chroot /mnt bash -c 'ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime'
 arch-chroot /mnt bash -c 'hwclock --systohc'
@@ -77,11 +81,9 @@ arch-chroot /mnt bash -c 'systemctl enable NetworkManager'
 echo -n "Enter hostname: "
 read hostname
 arch-chroot /mnt bash -c "echo \"$hostname\" > /etc/hostname"
-arch-chroot /mnt bash -c 'mkinitcpio -P'
 echo -n "Enter root password: "
 read rootpass
 echo -e "$rootpass\n$rootpass" | arch-chroot /mnt passwd
-
 echo -n "Enter username: "
 read username
 arch-chroot /mnt bash -c "useradd -m -G wheel -s /bin/bash \"$username\""
@@ -89,6 +91,7 @@ arch-chroot /mnt bash -c "echo \"$username ALL=(ALL:ALL) ALL\" | EDITOR='tee -a'
 echo -n "Enter user password: "
 read userpass
 echo -e "$userpass\n$userpass" | arch-chroot /mnt passwd $username
+pacstrap -K /mnt linux-zen linux-zen-headers
 
 #limine bootloader
 arch-chroot /mnt bash -c 'pacman -S --noconfirm limine efibootmgr'
@@ -146,6 +149,6 @@ timeout: 5
     module_path: boot():/initramfs-linux-zen-fallback.img
 EOF"
 
-arch-chroot /mnt bash -c "git clone https://github.com/UnixLudi0/Maturation /home/$username/Maturation"
+git clone "https://github.com/UnixLudi0/Maturation.git /mnt/home/$username/Maturation"
 arch-chroot /mnt bash -c "chown -R $username:$username /home/$username/Maturation"
 reboot

@@ -24,12 +24,4 @@ if [[ "$HG_GPU" -eq "amd" ]]; then
 else
   yay -S --noconfirm
 
-
-
-
-
-
-
-
-
 sudo mkinitcpio -P
