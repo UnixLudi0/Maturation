@@ -69,7 +69,7 @@ reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" -
 mkdir -p /mnt/etc
 echo "KEYMAP=ru" >> /mnt/etc/vconsole.conf
 echo "FONT=cyr-sun16" >> /mnt/etc/vconsole.conf
-pacstrap -K /mnt base linux-firmware kbd btrfs-progs networkmanager
+pacstrap -K /mnt base linux-firmware kbd btrfs-progs networkmanager sudo-rs
 genfstab -U /mnt > /mnt/etc/fstab
 arch-chroot /mnt bash -c 'ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime'
 arch-chroot /mnt bash -c 'hwclock --systohc'
@@ -87,7 +87,7 @@ echo -e "$rootpass\n$rootpass" | arch-chroot /mnt passwd
 echo -n "Enter username: "
 read username
 arch-chroot /mnt bash -c "useradd -m -G wheel -s /bin/bash \"$username\""
-arch-chroot /mnt bash -c "echo \"$username ALL=(ALL:ALL) ALL\" | EDITOR='tee -a' visudo"
+arch-chroot /mnt bash -c "echo \"$username ALL=(ALL:ALL) ALL\" | EDITOR='tee -a' visudo-rs"
 echo -n "Enter user password: "
 read userpass
 echo -e "$userpass\n$userpass" | arch-chroot /mnt passwd $username
@@ -149,6 +149,6 @@ timeout: 5
     module_path: boot():/initramfs-linux-zen-fallback.img
 EOF"
 
-git clone "https://github.com/UnixLudi0/Maturation.git /mnt/home/$username/Maturation"
+git clone "https://github.com/UnixLudi0/Maturation.git" "/mnt/home/$username/Maturation"
 arch-chroot /mnt bash -c "chown -R $username:$username /home/$username/Maturation"
 reboot

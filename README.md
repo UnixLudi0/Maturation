@@ -52,11 +52,11 @@ Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](ht
     - [ ] Remove dotfiles
 - [ ] arch.sh Base Arch Linux install with BTRFS and Limine bootloader
   - [x] Install support for UEFI/GPT
-  - [ ] Install support for BIOS/MBR
+  - [x] Install support for BIOS/MBR
   - [x] Select disk
   - [x] Btrfs filesystem, @ and @home subvolumes
   - [x] Find the fasters mirrors to download base packages with reflector
-  - [x] Install base packages. Base, systemd, linux-zen, linux-firmware, btrfs-progs
+  - [x] Install base packages. base, systemd, linux-zen, linux-firmware, btrfs-progs
   - [ ] Select timezone
   - [ ] Select locales
   - [x] Input hostname
@@ -70,7 +70,7 @@ Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](ht
 	- [x] CPU
 	- [x] GPU
 	- [x] Disk
-- [ ] base.sh
+- [x] base.sh
 	- [x] update keyrings
 	- [x] add extra repositories
 	- [x] mirrors update with reflector
@@ -87,6 +87,7 @@ Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](ht
 - [ ] packages_extra.sh 
 	- [ ] Davinci Resolve
 	- [ ] Xray
+	- [ ] Qemu
 - [ ] wine.sh
 	- [ ] Proton GE
 - [ ] optimization.sh
@@ -105,7 +106,7 @@ Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](ht
 	- [ ] kernel settings
 - [ ] uninstall.sh
     - [ ] Remove dotfiles
-### Project Wiki
+### Wiki
   - [ ] Cheatsheet of custom mangowc key bindings
   - [ ] Cheatsheet of custom nvim key bindings
 
@@ -113,12 +114,3 @@ Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](ht
 - [ ] Configure themes and icons
 - [ ] Custom bind and binds wiki
 - [ ] Building with yay and git clone+makepkg wrapped in script
-
- [screensharing](https://gist.github.com/brunoanc/2dea6ddf6974ba4e5d26c3139ffb7580)
- https://astronvim.com/
- https://github.com/LazyVim/LazyVim
- https://www.lunarvim.org/
- https://nvchad.com/
-
- GDK_BACKEND=x11 QT_QPA_PLATFORM=xcb SDL_VIDEODRIVER=x11 %command% for albion
-
