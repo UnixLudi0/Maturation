@@ -86,6 +86,30 @@ read rootpass
 echo -e "$rootpass\n$rootpass" | arch-chroot /mnt passwd
 echo -n "Enter username: "
 read username
+
+arch-chroot /mnt bash -c "cat > /etc/pam.d/sudo << EOF
+#%PAM-1.0
+auth		include		system-auth
+account		include		system-auth
+session		include		system-auth
+EOF"
+
+arch-chroot /mnt bash -c "cat > /etc/sudoers-rs << EOF
+# Keep your editor when running visudo
+Defaults!/usr/bin/visudo-rs env_keep += "SUDO_EDITOR EDITOR VISUAL"
+# The same if you choose to symlink visudo-rs to visudo
+Defaults!/usr/local/bin/visudo env_keep += "SUDO_EDITOR EDITOR VISUAL"
+
+ 
+# Sanitize your path
+Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/bin"
+ 
+# "root", and all members of the group "wheel" can run any command after providing a password.
+root ALL=(ALL:ALL) ALL
+%wheel ALL=(ALL:ALL) ALL
+EOF"
+
+arch-chroot /mnt bash -c 'ln -s /etc/pam.d/sudo /etc/pam.d/sudo-i'
 arch-chroot /mnt bash -c "useradd -m -G wheel -s /bin/bash \"$username\""
 arch-chroot /mnt bash -c "echo \"$username ALL=(ALL:ALL) ALL\" | EDITOR='tee -a' visudo-rs"
 echo -n "Enter user password: "
