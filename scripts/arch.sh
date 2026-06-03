@@ -24,13 +24,12 @@ echo -n "Disk wiped!"
 
 if [[ "$FIRMWARE" == "uefi" ]]; then
     echo -e "g\nn\n\n\n+5G\nt\n1\nn\n\n\n\nw\n" | fdisk "$disk"
-    partprobe "$disk"
 fi
 if [[ "$FIRMWARE" == "bios" ]]; then
     echo -e 'o\nn\np\n1\n\n+1G\na\nn\np\n2\n\n\nw' | fdisk "$disk"
-    partprobe "$disk"
 fi
 
+partprobe "$disk"
 sleep 1
 
 if [[ "$disk" =~ (nvme|mmcblk|loop) ]]; then
