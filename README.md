@@ -2,7 +2,7 @@
 My personal ricing of [MangoWM](https://mangowc.vercel.app) using ARU and CachyOS optimization.
 This project aims to bring optimization, integration, candy-eye to your desktop.
 This project is in passive development.
-Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](https://ventureo.codeberg.page) and [CachyOS](https://cachyos.org/), especially the [wiki](https://wiki.cachyos.org/)
+Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](https://ventureo.codeberg.page) and [CachyOS](https://cachyos.org/) for the [wiki](https://wiki.cachyos.org/) and cachyos repositories
 
 ## Applications
 | Application Type         | Application Realization     |

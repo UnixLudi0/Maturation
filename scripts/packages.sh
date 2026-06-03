@@ -1,4 +1,5 @@
-yay -S --nocnfirm wireplumber libgtop bluez bluez-utils networkmanager dart-sass upower gvfs gtksourceview3 libsoup3
+#mango
+yay -S --noconfirm wireplumber libgtop bluez bluez-utils networkmanager dart-sass upower gvfs gtksourceview3 libsoup3
 yay -S --noconfirm mangowm-git
 yay -S --noconfirm xdg-desktop-portal-wlr
 yay -S --noconfirm waybar
@@ -7,7 +8,6 @@ yay -S --noconfirm cliphist
 yay -S --noconfirm wl-clipboard
 yay -S --noconfirm wlsunset
 yay -S --noconfirm soteria-git
-yay -S --noconfirm swaync
 yay -S --noconfirm pamixer
 yay -S --noconfirm wlr-dpms
 yay -S --noconfirm sway-audio-idle-inhibit-git
@@ -16,9 +16,10 @@ yay -S --noconfirm dimland-git
 yay -S --noconfirm brightnessctl
 yay -S --noconfirm swayosd
 yay -S --noconfirm wlr-randr
-yay -S --noconfirm grimswaylock-effects-git
+yay -S --noconfirm swaylock-effects-git
 yay -S --noconfirm wlogout
 yay -S --noconfirm sox
+yay -S --noconfirm dimland-git
 
 #yazi
 yay -S --noconfirm yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide resvg imagemagick
