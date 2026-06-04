@@ -1,3 +1,7 @@
+mkdir -p ../logs
+exec 2> ../logs/optimization.sh.log
+set -euxo pipefail
+
 #iniramfs
 sudo sed -i 's/#COMPRESSION="lz4"/COMPRESSION="lz4"/g' /etc/mkinitcpio.conf
 sudo sed -i 's/#COMPRESSION_OPTIONS=()/COMPRESSION_OPTIONS=(-9)/g' /etc/mkinitcpio.conf

@@ -1,4 +1,8 @@
 #!/bin/bash
+mkdir -p ../logs
+exec 2> ../logs/config.sh.log
+set -euxo pipefail
+
 export HG_ROOT=$(realpath .)
 
 config_menu() {

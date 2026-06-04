@@ -1,3 +1,7 @@
+mkdir -p ../logs
+exec 2> ../logs/packages.sh.log
+set -euxo pipefail
+
 #mango
 yay -S --noconfirm wireplumber libgtop bluez bluez-utils networkmanager dart-sass upower gvfs gtksourceview3 libsoup3
 yay -S --noconfirm mangowm-git
