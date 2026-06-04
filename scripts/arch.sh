@@ -111,6 +111,11 @@ EOF"
 arch-chroot /mnt bash -c 'ln -s /etc/pam.d/sudo /etc/pam.d/sudo-i'
 arch-chroot /mnt bash -c "useradd -m -G wheel -s /bin/bash \"$username\""
 arch-chroot /mnt bash -c "echo \"$username ALL=(ALL:ALL) ALL\" | EDITOR='tee -a' visudo-rs"
+arch-chroot /mnt bash -c "ln -s /usr/bin/sudo-rs /usr/local/bin/sudo"
+arch-chroot /mnt bash -c "ln -s /usr/bin/su-rs /usr/local/bin/su"
+arch-chroot /mnt bash -c "ln -s /usr/bin/visudo-rs /usr/local/bin/visudo"
+arch-chroot /mnt bash -c "ln -s /usr/bin/sudoedit-rs /usr/local/bin/sudoedit"
+
 echo -n "Enter user password: "
 read userpass
 echo -e "$userpass\n$userpass" | arch-chroot /mnt passwd $username
