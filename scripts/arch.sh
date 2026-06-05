@@ -1,5 +1,6 @@
 mkdir -p ../logs
-exec 2> ../logs/arch.sh.log
+exec > >(tee -a ../logs/arch.log) 2>&1
+
 set -euxo pipefail
 timedatectl set-ntp true
 

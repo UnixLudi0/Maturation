@@ -1,5 +1,5 @@
 mkdir -p ../logs
-exec 2> ../logs/optimization.sh.log
+exec > >(tee -a ../logs/optimizationlog) 2>&1
 set -euxo pipefail
 
 #iniramfs

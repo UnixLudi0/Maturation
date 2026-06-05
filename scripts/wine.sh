@@ -1,5 +1,5 @@
 mkdir -p ../logs
-exec 2> ../logs/wine.sh.log
+exec > >(tee -a ../logs/wine.log) 2>&1
 set -euxo pipefail
 
 git clone https://github.com/ventureoo/PKGBUILDs

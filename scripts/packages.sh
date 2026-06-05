@@ -1,108 +1,110 @@
 mkdir -p ../logs
-exec 2> ../logs/packages.sh.log
+exec > >(tee -a ../logs/packages.log) 2>&1
 set -euxo pipefail
 
+packages=""
+
 #mango
-yay -S --noconfirm wireplumber libgtop bluez bluez-utils networkmanager dart-sass upower gvfs gtksourceview3 libsoup3
-yay -S --noconfirm mangowm-git
-yay -S --noconfirm xdg-desktop-portal-wlr
-yay -S --noconfirm waybar
-yay -S --noconfirm wl-clip-persist
-yay -S --noconfirm cliphist
-yay -S --noconfirm wl-clipboard
-yay -S --noconfirm wlsunset
-yay -S --noconfirm soteria-git
-yay -S --noconfirm pamixer
-yay -S --noconfirm wlr-dpms
-yay -S --noconfirm sway-audio-idle-inhibit-git
-yay -S --noconfirm swayidle
-yay -S --noconfirm dimland-git
-yay -S --noconfirm brightnessctl
-yay -S --noconfirm swayosd
-yay -S --noconfirm wlr-randr
-yay -S --noconfirm swaylock-effects-git
-yay -S --noconfirm wlogout
-yay -S --noconfirm sox
-yay -S --noconfirm dimland-git
+packages+=" wireplumber libgtop bluez bluez-utils networkmanager dart-sass upower gvfs gtksourceview3 libsoup3"
+packages+=" mangowm-git"
+packages+=" xdg-desktop-portal-wlr"
+packages+=" waybar"
+packages+=" wl-clip-persist"
+packages+=" cliphist"
+packages+=" wl-clipboard"
+packages+=" wlsunset"
+packages+=" soteria-git"
+packages+=" pamixer"
+packages+=" wlr-dpms"
+packages+=" sway-audio-idle-inhibit-git"
+packages+=" swayidle"
+packages+=" dimland-git"
+packages+=" brightnessctl"
+packages+=" swayosd"
+packages+=" wlr-randr"
+packages+=" swaylock-effects-git"
+packages+=" wlogout"
+packages+=" sox"
+packages+=" dimland-git"
 
 #yazi
-yay -S --noconfirm yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide resvg imagemagick
+packages+=" yazi ffmpeg 7zip jq poppler fd ripgrep fzf zoxide resvg imagemagick"
 
 #neovim 
-yay -S --noconfirm neovim
+packages+=" neovim"
 
 #mpv
-yay -S --noconfirm mpv
+packages+=" mpv"
 
 #losslesscut
-yay -S --noconfirm losslessCut
+packages+=" losslesscut-bin"
 
 #gimp
-yay -S --noconfirm gimp
+packages+=" gimp"
 
-#flameshott
-yay -S --noconfirm flameshot
+#flameshot
+packages+=" flameshot"
 
 #libreoffice-still
-yay -S --noconfirm libreoffice-still
+packages+=" libreoffice-still"
 
 #btop
-yay -S --noconfirm btop
+packages+=" btop"
 
 #steam
-yay -S --noconfirm steam
+packages+=" steam"
 
 #vesktop
-yay -S --noconfirm vesktop
+packages+=" vesktop"
 
 #telegram
-yay -S --noconfirm telegram
+packages+=" telegram-desktop"
 
 #pavucontrol
-yay -S --noconfirm pavucontrol
+packages+=" pavucontrol"
 
 #firefox
-yay -S --noconfirm firefox
+packages+=" firefox"
 
 #fuzzel
-yay -S --noconfirm fuzzel
+packages+=" fuzzel"
 
 #bitwarden
-yay -S --noconfirm bitwarden
+packages+=" bitwarden"
 
 #copyq
-yay -S --noconfirm copyq
+packages+=" copyq"
 
 #qbittorrent
-yay -S --noconfirm qbittorrent
+packages+=" qbittorrent"
 
 #thunderbird
-yay -S --noconfirm thunderbird
+packages+=" thunderbird"
 
 #swaync
-yay -S --noconfirm swaync
+packages+=" swaync"
 
 #keyd
-yay -S --noconfirm keyd
+packages+=" keyd"
 
 #zsh
-yay -S --noconfirm zsh
+packages+=" zsh"
 
 #obs
-yay -S --noconfirm obs
+packages+=" obs"
 
 #bleachbit
-yay -S --noconfirm bleachbit
+packages+=" bleachbit"
 
 #foot
-yay -S foot
+packages+=" foot"
 
 #fastfetch
-yay -S --noconfirm fastfetch
+packages+=" fastfetch"
 
-yay -S --noconfirm noto-fonts
+packages+=" noto-fonts"
+packages+=" woff2-font-awesome"
+packages+=" ttf-nerd-fonts-symbols-common"
+packages+=" ttf-jetbrains-mono-nerd"
 
-yay -S --noconfirm nerd-fonts
-
-yay -S --noconfirm woff2-font-awesome
-
+yay -S --noconfirm $packages
