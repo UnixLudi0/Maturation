@@ -11,7 +11,7 @@ sudo systemctl enable --now archlinux-keyring-wkd-sync.timer
 curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz
 tar xvf cachyos-repo.tar.xz
 cd cachyos-repo
-sed -i 's/pacman -U/pacman -U --noconfirm/g' ./cachyos-repo.sh
+sed -i '/set -e/a pacman() { /usr/bin/pacman "$@" --noconfirm; }' ./cachyos-repo.sh
 sudo ./cachyos-repo.sh
 cd ..
 rm -r cachyos-repo && rm cachyos-repo.tar.xz
