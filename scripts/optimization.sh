@@ -1,6 +1,4 @@
-mkdir -p ../logs
-exec > >(tee -a ../logs/optimizationlog) 2>&1
-set -euxo pipefail
+#!/bin/bash
 
 #iniramfs
 sudo sed -i 's/#COMPRESSION="lz4"/COMPRESSION="lz4"/g' /etc/mkinitcpio.conf

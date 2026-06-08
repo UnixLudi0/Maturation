@@ -1,7 +1,4 @@
 #!/bin/bash
-mkdir -p ../logs
-exec > >(tee -a ../logs/config.log) 2>&1
-set -euxo pipefail
 
 export HG_ROOT=$(realpath .)
 

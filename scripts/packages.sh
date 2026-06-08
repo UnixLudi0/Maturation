@@ -1,6 +1,4 @@
-mkdir -p ../logs
-exec > >(tee -a ../logs/packages.log) 2>&1
-set -euxo pipefail
+#!/bin/bash
 
 packages=""
 

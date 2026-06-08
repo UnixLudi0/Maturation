@@ -1,7 +1,4 @@
-mkdir -p ../logs
-exec 2> ../logs/packages_opt.sh.log
-exec > >(tee -a ../logs/packages_opt.log) 2>&1
-set -euxo pipefail
+#!/bin/bash
 
 #davinci-resolve-studio
 yay -S --noconfirm davinci-resolve-studio

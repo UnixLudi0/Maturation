@@ -1,43 +1,52 @@
 #!/bin/bash
 
-source scripts/config.sh
+mkdir -p ./logs
+set -euo pipefail
 
-options=("Установить Arch Linux" "Редактировать конфиг" "Базовая настройка" "Установка прикладных программ" "Установка продвинутых программ" "WINE" "Оптимизация" "Удаление настроек и прикладных программ" "Выход")
+source scripts/config.sh > logs/config.log 2>&1
+
+options=("Установить Arch Linux" "Редактировать конфиг" "Базовая настройка" "Установка прикладных программ" "Установка опциональных программ" "Wine" "Оптимизация" "Удаление настроек и прикладных программ" "Выход")
 clear
 echo "=== ГЛАВНОЕ МЕНЮ УСТАНОВКИ ==="
 select opt in "${options[@]}"; do
     case $opt in
         "Установить Arch Linux")
             #echo "Запуск arch.txt..."
-            sudo bash scripts/arch.sh
+            source scripts/arch.sh > logs/arch.log 2>&1
             ;;
         "Редактировать конфиг")
             echo "Запуск config.sh..."
-            source scripts/config.sh
+            source scripts/config.sh > logs/config.log 2>&1
             ;;
         "Базовая настройка")
             echo "Запуск base.sh..."
-            source scripts/base.sh
+            source scripts/base.sh > logs/bash.log 2>&1
+
             ;;
         "Установка прикладных программ")
-            echo "Запуск apps.sh..."
-            source scripts/packages.sh
+            echo "Запуск packages.sh..."
+            source scripts/packages.sh > logs/packages.log 2>&1
+
             ;;
-        "Установка продвинутых программ")
-            echo "Запуск apps-extra.sh..."
-            source scripts/packages_extra.sh
+        "Установка опциональных программ")
+            echo "Запуск packages_opt.sh..."
+            source scripts/packages_opt.sh > logs/packages_opt.log 2>&1
+
             ;;
-        "WINE")
+        "Wine")
             echo "Запуск wine.sh..."
-            source scripts/wine.sh
+            source scripts/wine.sh > logs/wine.log 2>&1
+
             ;;
         "Оптимизация")
             echo "Запуск optimization.sh..."
-            source scripts/optimization.sh
+            source scripts/optimization.sh > logs/optimization.log 2>&1
+
             ;;
         "Удаление настроек и прикладных программ")
             echo "Запуск скрипта удаления..."
-            source uninstall.sh
+            source uninstall.sh > logs/uninstall.log 2>&1
+
             ;;
         "Выход")
             echo "=== ФИНАЛЬНЫЕ НАСТРОЙКИ ==="

@@ -1,7 +1,5 @@
-mkdir -p ../logs
-exec > >(tee -a ../logs/arch.log) 2>&1
+#!/bin/bash
 
-set -euxo pipefail
 timedatectl set-ntp true
 
 #firmware detection

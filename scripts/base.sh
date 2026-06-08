@@ -1,6 +1,4 @@
-mkdir -p ../logs
-exec > >(tee -a ../logs/base.log) 2>&1
-set -euxo pipefail
+#!/bin/bash
 
 sudo pacman-key --init
 sudo pacman-key --populate archlinux
@@ -14,7 +12,8 @@ cd cachyos-repo
 sed -i '/set -e/a pacman() { /usr/bin/pacman "$@" --noconfirm; }' ./cachyos-repo.sh
 sudo ./cachyos-repo.sh
 cd ..
-rm -r cachyos-repo && rm cachyos-repo.tar.xz
+rm -rf cachyos-repo
+rm -f cachyos-repo.tar.xz
 
 sudo pacman -Sy --noconfirm reflector
 sudo reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" -l 25 --sort age --save /etc/pacman.d/mirrorlist
@@ -25,11 +24,12 @@ sudo pacman -S --noconfirm autoconf automake binutils bison debugedit fakeroot f
 git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -sric --noconfirm
-cd .. && rm -r yay
+cd .. && rm -rf yay
 
 yay -S --noconfirm linux-cachyos linux-cachyos-headers linux-zen linux-zen-headers
 yay -S --noconfirm git cmake mkinitcpio-firmware
 yay -S --noconfirm chwd
 sudo chwd -a
 
+yay
 sudo mkinitcpio -P
