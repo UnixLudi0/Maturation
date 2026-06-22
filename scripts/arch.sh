@@ -2,42 +2,10 @@
 
 timedatectl set-ntp true
 
-#firmware detection
-if [ -d /sys/firmware/efi ]; then
-    FIRMWARE="uefi"
-else
-    FIRMWARE="bios"
-fi
-
-#disk selection
-echo "Choose disk:"
-lsblk -dn -o NAME,TYPE | awk '$2=="disk" {count++; print count") "$1}'
-echo "All data on selected disk will be wiped!"
-echo -n "Input disk number: "
-read num
-[[ "$num" =~ ^[0-9]+$ ]] || { echo "Invalid input"; exit 1; }
-disk="/dev/$(lsblk -dn -o NAME,TYPE | awk '$2=="disk"{print $1}' | sed -n "${num}p")"
-echo "Will be used disk: $disk"
 wipefs -a "$disk"
-echo -n "Disk wiped!"
-
-if [[ "$FIRMWARE" == "uefi" ]]; then
-    echo -e "g\nn\n\n\n+5G\nt\n1\nn\n\n\n\nw\n" | fdisk "$disk"
-fi
-if [[ "$FIRMWARE" == "bios" ]]; then
-    echo -e 'o\nn\np\n1\n\n+1G\na\nn\np\n2\n\n\nw' | fdisk "$disk"
-fi
-
+$disklabel
 partprobe "$disk"
 sleep 1
-
-if [[ "$disk" =~ (nvme|mmcblk|loop) ]]; then
-    part1="p1"
-    part2="p2"
-else
-    part1="1"
-    part2="2"
-fi
 
 mkfs.fat -F 32 "$disk$part1"
 mkfs.btrfs -f -L btrfs "$disk$part2"
@@ -71,19 +39,12 @@ pacstrap -K /mnt base linux-firmware kbd btrfs-progs networkmanager sudo-rs
 genfstab -U /mnt > /mnt/etc/fstab
 arch-chroot /mnt bash -c 'ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime'
 arch-chroot /mnt bash -c 'hwclock --systohc'
-arch-chroot /mnt bash -c "sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen"
-arch-chroot /mnt bash -c "sed -i 's/^#ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen"
+arch-chroot /mnt bash -c "echo locales > /etc/locale.gen"
 arch-chroot /mnt bash -c 'locale-gen'
 arch-chroot /mnt bash -c 'echo "LANG=ru_RU.UTF-8" > /etc/locale.conf'
 arch-chroot /mnt bash -c 'systemctl enable NetworkManager'
-echo -n "Enter hostname: "
-read hostname
 arch-chroot /mnt bash -c "echo \"$hostname\" > /etc/hostname"
-echo -n "Enter root password: "
-read rootpass
 echo -e "$rootpass\n$rootpass" | arch-chroot /mnt passwd
-echo -n "Enter username: "
-read username
 
 arch-chroot /mnt bash -c "cat > /etc/pam.d/sudo << EOF
 #%PAM-1.0
@@ -115,8 +76,6 @@ arch-chroot /mnt bash -c "ln -s /usr/bin/su-rs /usr/local/bin/su"
 arch-chroot /mnt bash -c "ln -s /usr/bin/visudo-rs /usr/local/bin/visudo"
 arch-chroot /mnt bash -c "ln -s /usr/bin/sudoedit-rs /usr/local/bin/sudoedit"
 
-echo -n "Enter user password: "
-read userpass
 echo -e "$userpass\n$userpass" | arch-chroot /mnt passwd $username
 pacstrap -K /mnt linux-zen linux-zen-headers
 
@@ -126,40 +85,10 @@ mkdir -p /mnt/boot/limine
 mkdir -p /mnt/etc/pacman.d/hooks
 mkdir -p /mnt/boot/EFI/BOOT
 
-if [[ "$FIRMWARE" == "uefi" ]]; then
-    arch-chroot /mnt bash -c 'cp /usr/share/limine/BOOTX64.EFI /boot/limine/'
-    arch-chroot /mnt bash -c 'cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/'
-    arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook << 'EOF'
-[Trigger]
-Operation = Install
-Operation = Upgrade
-Type = Package
-Target = limine
-
-[Action]
-Description = Deploying Limine after upgrade...
-When = PostTransaction
-Exec = /bin/sh -c '/usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/limine/ && /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/'
-EOF"
-    arch-chroot /mnt bash -c "efibootmgr --create --disk $disk --part 1 --label 'Limine' --loader '\limine\BOOTX64.EFI' --unicode"
-fi
-
-if [[ "$FIRMWARE" == "bios" ]]; then
-    arch-chroot /mnt bash -c 'cp /usr/share/limine/limine-bios.sys /boot/limine/'
-    arch-chroot /mnt bash -c "limine bios-install \"$disk\""
-    arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook << 'EOF'
-[Trigger]
-Operation = Install
-Operation = Upgrade
-Type = Package
-Target = limine
-
-[Action]
-Description = Deploying Limine after upgrade...
-When = PostTransaction
-Exec = /bin/sh -c '/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/'
-EOF"
-fi
+arch-chroot /mnt bash -c $limine1
+arch-chroot /mnt bash -c $limine2
+arch-chroot /mnt bash -c $limine3
+arch-chroot /mnt bash -c $limine4
 
 arch-chroot /mnt bash -c "cat > /boot/limine/limine.conf << EOF
 timeout: 5

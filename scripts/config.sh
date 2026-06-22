@@ -1,174 +1,48 @@
-#!/bin/bash
+#disk selection
+lsblk -dn -o NAME,TYPE | awk '$2=="disk" {print $1}' >> ./variables.sh
 
-export HG_ROOT=$(realpath .)
+#firmware detection
+if [ -d /sys/firmware/efi ]; then
+    disklabel='echo -e ",5G,U\n,+,\n" | sfdisk --label gpt "$disk"'
+    limine1='cp /usr/share/limine/BOOTX64.EFI /boot/limine && cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/'
+    limine2="cat > /etc/pacman.d/hooks/99-limine.hook << 'EOF'"
+    limine3="efibootmgr --create --disk $disk --part 1 --label 'Limine' --loader '\limine\BOOTX64.EFI' --unicode"
+    hook="Exec = /bin/sh -c '/usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/limine/ && /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/"
+else
+    disklabel='echo -e ",5G,L,*\n,+,\n" | sfdisk --label dos "$disk"'
+    limine1="arch-chroot /mnt bash -c 'cp /usr/share/limine/limine-bios.sys /boot/limine/'"
+    limine2='arch-chroot /mnt bash -c "limine bios-install \"$disk\""'
+    limine3=arch-chroot /mnt bash -c "cat > /etc/pacman.d/hooks/99-limine.hook << 'EOF'"
+    hook="Exec = /bin/sh -c '/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/'"
+fi
 
-config_menu() {
-    PS3="Выберите: "
-    options=("Язык" "Процессор" "Видеокарта" "Диск" "Показать настройки" "Назад")
-    clear
-    echo "=== ГЛАВНОЕ МЕНЮ КОНФИГА ==="
-    select opt in "${options[@]}"; do
-        case $REPLY in
-            1)
-                choose_language
-                ;;
-            2)
-                choose_cpu
-                ;;
-            3)
-                choose_gpu
-                ;;
-            4)
-                choose_disk
-                ;;
-            5)
-                show_config
-                ;;
-            6)
-                return 0
-                ;;
-            *)
-                echo "Неверный выбор! Выберите от 1 до 6"
-                ;;
-        esac
-    done
-}
+if [[ "$disk" =~ (nvme|mmcblk|loop) ]]; then
+    part1="p1"
+    part2="p2"
+else
+    part1="1"
+    part2="2"
+fi
 
-choose_language() {
-    PS3="Выберите: "
-    options=("Русский" "Английский" "Назад")
-    clear
-    echo "=== ВЫБОР ЯЗЫКА ==="
-    select opt in "${options[@]}"; do
-        case $REPLY in
-            1)
-                export HG_LANG=ru
-                echo "Выбран русский язык"
-                return 0
-                ;;
-            2)
-                export HG_LANG=en
-                echo "Выбран английский язык"
-                return 0
-                ;;
-            3)
-                return 0
-                ;;
-            *)
-                echo "Неверный выбор!"
-                ;;
-        esac
-    done
-}
+limine4="
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
 
-choose_cpu() {
-    PS3="Выберите: "
-    options=("Intel" "AMD" "Назад")
-    clear
-    echo "=== ВЫБОР ПРОЦЕССОРА ==="
-    select opt in "${options[@]}"; do
-        case $REPLY in
-            1)
-                export HG_CPU=intel-cpu
-                echo "Выбран процессор Intel"
-                return 0
-                ;;
-            2)
-                export HG_CPU=amd-cpu
-                echo "Выбран процессор AMD"
-                return 0
-                ;;
-            3)
-                return 0
-                ;;
-            *)
-                echo "Неверный выбор!"
-                ;;
-        esac
-    done
-}
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+$hook
+"
 
-choose_gpu() {
-    PS3="Выберите: "
-    options=("Intel" "AMD" "Nvidia" "Назад")
-    clear
-    echo "=== ВЫБОР ВИДЕОКАРТЫ ==="
-    select opt in "${options[@]}"; do
-        case $REPLY in
-            1)
-                export HG_GPU=intel-gpu
-                echo "Выбрана видеокарта Intel"
-                return 0
-                ;;
-            2)
-                export HG_GPU=amd-gpu
-                echo "Выбрана видеокарта AMD"
-                return 0
-                ;;
-            3)
-                export HG_GPU=nvidia-gpu
-                echo "Выбрана видеокарта Nvidia"
-                return 0
-                ;;
-            4)
-                return 0
-                ;;
-            *)
-                echo "Неверный выбор!"
-                ;;
-        esac
-    done
-}
+timedatectl list-timezones > /tmp/timezones.txt
+sed -i 's/^/#/' /tmp/timezones.txt
+nano /tmp/timezones.txt
+grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /tmp/timezones.txt >> ./variables.sh
+nano /etc/locale.gen
 
-choose_disk() {
-    PS3="Выберите: "
-    options=("SSD" "HDD" "Назад")
-    clear
-    echo "=== УКАЖИТЕ ТИП ДИСКА ==="
-    select opt in "${options[@]}"; do
-        case $REPLY in
-            1)
-                export HG_DISK=ssd
-                echo "Выбран SDD"
-                return 0
-                ;;
-            2)
-                export HG_DISK=hdd
-                echo "Выбран HDD"
-                return 0
-                ;;
-            3)
-                return 0
-                ;;
-            *)
-                echo "Неверный выбор!"
-                ;;
-        esac
-    done
-}
+nano ./variables.sh
+source ./variables.sh
 
-
-show_config() {
-    PS3="Выберите: "
-    options=("Назад")
-    clear
-    echo "=== ТЕКУЩИЕ НАСТРОЙКИ ==="
-    echo "Корневая директория: $HG_ROOT"
-    echo "Язык: ${HG_LANG:-не выбрано}"
-    echo "Процессор: ${HG_CPU:-не выбрано}" 
-    echo "Видеокарта: ${HG_GPU:-не выбрано}"
-    echo "Тип диска: ${HG_DISK:-не выбрано}"
-    echo "=========================="
-    select opt in "${options[@]}"; do
-        case $REPLY in
-            1)
-                return 0
-                ;;
-            *)
-                echo "Неверный выбор!"
-                ;;
-        esac
-    done
-}
-
-config_menu
