@@ -1,3 +1,12 @@
+timedatectl list-timezones > /tmp/timezones.txt
+sed -i 's/^/#/' /tmp/timezones.txt
+nano /tmp/timezones.txt
+grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /tmp/timezones.txt >> ./variables.sh
+nano /etc/locale.gen
+
+nano ./variables.sh
+source ./variables.sh
+
 #disk selection
 lsblk -dn -o NAME,TYPE | awk '$2=="disk" {print $1}' >> ./variables.sh
 
@@ -36,13 +45,3 @@ Description = Deploying Limine after upgrade...
 When = PostTransaction
 $hook
 "
-
-timedatectl list-timezones > /tmp/timezones.txt
-sed -i 's/^/#/' /tmp/timezones.txt
-nano /tmp/timezones.txt
-grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /tmp/timezones.txt >> ./variables.sh
-nano /etc/locale.gen
-
-nano ./variables.sh
-source ./variables.sh
-
