@@ -12,35 +12,35 @@ select opt in "${options[@]}"; do
     case $opt in
         "Установить Arch Linux")
             #echo "Запуск arch.txt..."
-            source scripts/arch.sh > logs/arch.log 2>&1
+            source scripts/arch.sh 2>&1 | tee -a logs/arch.log
             ;;
         "Редактировать конфиг")
             echo "Запуск config.sh..."
-            source scripts/config.sh > logs/config.log 2>&1
+            source scripts/config.sh 2>&1 | tee -a logs/config.log
             ;;
         "Базовая настройка")
             echo "Запуск base.sh..."
-            source scripts/base.sh > logs/bash.log 2>&1
+            source scripts/base.sh 2>&1 | tee -a logs/bash.log
 
             ;;
         "Установка прикладных программ")
             echo "Запуск packages.sh..."
-            source scripts/packages.sh > logs/packages.log 2>&1
+            source scripts/packages.sh 2>&1 | tee -a logs/packages.log
 
             ;;
         "Установка опциональных программ")
             echo "Запуск packages_opt.sh..."
-            source scripts/packages_opt.sh > logs/packages_opt.log 2>&1
+            source scripts/packages_opt.sh 2>&1 | tee -a logs/packages_opt.log
 
             ;;
         "Wine")
             echo "Запуск wine.sh..."
-            source scripts/wine.sh > logs/wine.log 2>&1
+            source scripts/wine.sh 2>&1 | tee -a logs/wine.log
 
             ;;
         "Оптимизация")
             echo "Запуск optimization.sh..."
-            source scripts/optimization.sh > logs/optimization.log 2>&1
+            source scripts/optimization.sh 2>&1 | tee -a logs/optimization.log
 
             ;;
         "Удаление настроек и прикладных программ")
