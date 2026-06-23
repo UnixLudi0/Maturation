@@ -3,7 +3,7 @@
 mkdir -p ./logs
 set -euo pipefail
 
-source scripts/config.sh > logs/config.log 2>&1
+source scripts/config.sh logs/config.log 2>&1
 
 options=("Установить Arch Linux" "Редактировать конфиг" "Базовая настройка" "Установка прикладных программ" "Установка опциональных программ" "Wine" "Оптимизация" "Удаление настроек и прикладных программ" "Выход")
 clear
