@@ -5,7 +5,5 @@ rootpass="toor"
 username="user"
 userpass="resu"
 disk=""
-locale=""
-timezone=""
 #hdd/ssd
 disktype=""

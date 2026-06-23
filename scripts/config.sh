@@ -1,14 +1,14 @@
 timedatectl list-timezones > /tmp/timezones.txt
 sed -i 's/^/#/' /tmp/timezones.txt
 nano /tmp/timezones.txt
-grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /tmp/timezones.txt >> ./variables.sh
+echo "\$timezone=$(grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /tmp/timezones.txt)" >> scripts/variables.sh
 nano /etc/locale.gen
 
-nano ./variables.sh
-source ./variables.sh
+nano scripts/variables.sh
+source scripts/variables.sh
 
 #disk selection
-lsblk -dn -o NAME,TYPE | awk '$2=="disk" {print $1}' >> ./variables.sh
+lsblk -dn -o NAME,TYPE | awk '$2=="disk" {print $1}' >> scripts/variables.sh
 
 #firmware detection
 if [ -d /sys/firmware/efi ]; then

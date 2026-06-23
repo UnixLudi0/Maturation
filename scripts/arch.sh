@@ -37,7 +37,7 @@ echo "KEYMAP=ru" >> /mnt/etc/vconsole.conf
 echo "FONT=cyr-sun16" >> /mnt/etc/vconsole.conf
 pacstrap -K /mnt base linux-firmware kbd btrfs-progs networkmanager sudo-rs
 genfstab -U /mnt > /mnt/etc/fstab
-arch-chroot /mnt bash -c 'ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime'
+arch-chroot /mnt bash -c 'ln -sf /usr/share/zoneinfo/'"$timezone" '/etc/localtime'
 arch-chroot /mnt bash -c 'hwclock --systohc'
 arch-chroot /mnt bash -c "echo locales > /etc/locale.gen"
 arch-chroot /mnt bash -c 'locale-gen'
