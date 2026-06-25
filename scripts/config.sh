@@ -1,14 +1,13 @@
 timedatectl list-timezones > /tmp/timezones.txt
 sed -i 's/^/#/' /tmp/timezones.txt
 nano /tmp/timezones.txt
-echo "\$timezone=$(grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /tmp/timezones.txt)" >> scripts/variables.sh
+echo "timezone=$(grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /tmp/timezones.txt)" >> scripts/variables.sh
 nano /etc/locale.gen
+#disk selection
+lsblk -dn -o NAME,TYPE | awk '$2=="disk" {print $1}' >> scripts/variables.sh
 
 nano scripts/variables.sh
 source scripts/variables.sh
-
-#disk selection
-lsblk -dn -o NAME,TYPE | awk '$2=="disk" {print $1}' >> scripts/variables.sh
 
 #firmware detection
 if [ -d /sys/firmware/efi ]; then
@@ -25,14 +24,6 @@ else
     hook="Exec = /bin/sh -c '/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/'"
 fi
 
-if [[ "$disk" =~ (nvme|mmcblk|loop) ]]; then
-    part1="p1"
-    part2="p2"
-else
-    part1="1"
-    part2="2"
-fi
-
 limine4="
 [Trigger]
 Operation = Install
@@ -45,3 +36,11 @@ Description = Deploying Limine after upgrade...
 When = PostTransaction
 $hook
 "
+
+if [[ "$disk" =~ (nvme|mmcblk|loop) ]]; then
+    part1="p1"
+    part2="p2"
+else
+    part1="1"
+    part2="2"
+fi
