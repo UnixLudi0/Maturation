@@ -4,7 +4,7 @@ nano /tmp/timezones.txt
 echo "timezone=$(grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /tmp/timezones.txt)" >> scripts/variables.sh
 nano /etc/locale.gen
 #disk selection
-lsblk -dn -o NAME,TYPE | awk '$2=="disk" {print $1}' >> scripts/variables.sh
+lsblk -dn -o NAME,TYPE | awk '$2=="disk" {print $1}' | sed 's|^|#disk=/dev/|' >> scripts/variables.sh
 
 nano scripts/variables.sh
 source scripts/variables.sh
