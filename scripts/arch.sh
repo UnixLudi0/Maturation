@@ -3,7 +3,7 @@
 timedatectl set-ntp true
 
 wipefs -a "$disk"
-$disklabel
+eval "$disklabel"
 partprobe "$disk"
 sleep 1
 
@@ -85,10 +85,10 @@ mkdir -p /mnt/boot/limine
 mkdir -p /mnt/etc/pacman.d/hooks
 mkdir -p /mnt/boot/EFI/BOOT
 
-arch-chroot /mnt bash -c $limine1
-arch-chroot /mnt bash -c $limine2
-arch-chroot /mnt bash -c $limine3
-arch-chroot /mnt bash -c $limine4
+arch-chroot /mnt bash -c eval "$limine1"
+arch-chroot /mnt bash -c eval "$limine2"
+arch-chroot /mnt bash -c eval "$limine3"
+arch-chroot /mnt bash -c "echo $limine4 > /etc/pacman.d/hooks/99-limine.hook"
 
 arch-chroot /mnt bash -c "cat > /boot/limine/limine.conf << EOF
 timeout: 5
