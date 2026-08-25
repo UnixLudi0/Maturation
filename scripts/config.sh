@@ -53,7 +53,7 @@ disklabel='echo -e "label: dos\n size=5G, type=c, bootable\n size=+, type=L" | s
 limine1="mkdir -p /boot/limine"
 limine2="cp /usr/share/limine/limine-bios.sys /boot/limine/"
 limine3="limine bios-install $disk"
-limine4k='Exec = /bin/sh -c "/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/"'
+limine4='Exec = /bin/sh -c "/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/"'
 EOF
 fi
 
