@@ -14,7 +14,7 @@ EOF
 #disk
 lsblk -dn -o NAME | awk '$1 ~ /^(sd[a-z]|nvme[0-9]|vd[a-z]|mmcblk[0-9])/' | while read -r disk; do 
 
-    echo "#disk=$disk" >> scripts/variables.sh
+    echo "#disk=/dev/$disk" >> scripts/variables.sh
 
     if [[ "$disk" =~ (nvme|mmcblk) ]]; then
         echo "#part1=p1" >> scripts/variables.sh
