@@ -88,7 +88,19 @@ mkdir -p /mnt/boot/EFI/BOOT
 arch-chroot /mnt bash -c eval "$limine1"
 arch-chroot /mnt bash -c eval "$limine2"
 arch-chroot /mnt bash -c eval "$limine3"
-arch-chroot /mnt bash -c "echo $limine4 > /etc/pacman.d/hooks/99-limine.hook"
+
+cat << EOF >> /mnt/etc/pacman.d/hooks/99-limine.hook
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = limine
+
+[Action]
+Description = Deploying Limine after upgrade...
+When = PostTransaction
+$limine4
+EOF
 
 arch-chroot /mnt bash -c "cat > /boot/limine/limine.conf << EOF
 timeout: 5

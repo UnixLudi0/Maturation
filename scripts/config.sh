@@ -45,32 +45,17 @@ disklabel='echo -e "label: gpt\n size=5G, type=U\n size=+, type=L" | sfdisk $dis
 limine1='arch-chroot /mnt bash -c "mkdir -p /boot/EFI/BOOT"'
 limine2='arch-chroot /mnt bash -c "cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI"'
 limine3="arch-chroot /mnt efibootmgr --create --disk $disk --part 1 --label 'Arch Linux Limine Boot Loader' --loader '\EFI\BOOT\BOOTX64.EFI' --unicode"
-
+limine4='Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI'
 EOF
-    hook='Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI'
 else
     cat << 'EOF' >> scripts/variables.sh
 disklabel='echo -e "label: dos\n size=5G, type=c, bootable\n size=+, type=L" | sfdisk $disk'
 limine1='arch-chroot /mnt bash -c "mkdir -p /boot/limine"'
 limine2='arch-chroot /mnt bash -c "cp /usr/share/limine/limine-bios.sys /boot/limine/"'
 limine3='arch-chroot /mnt bash -c "limine bios-install $disk"'
+limine4k='Exec = /bin/sh -c "/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/"'
 EOF
-    hook='Exec = /bin/sh -c "/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/"'
 fi
-
-cat << EOF >> scripts/variables.sh
-limine4="
-[Trigger]
-Operation = Install
-Operation = Upgrade
-Type = Package
-Target = limine
-
-[Action]
-Description = Deploying Limine after upgrade...
-When = PostTransaction
-$hook"
-EOF
 
 #manual editing if required
 nano scripts/variables.sh
