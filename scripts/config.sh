@@ -42,17 +42,17 @@ echo "timezone=$(grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /tmp/timezones.txt)" >
 if [ -d /sys/firmware/efi ]; then
     cat << 'EOF' >> scripts/variables.sh
 disklabel='echo -e "label: gpt\n size=5G, type=U\n size=+, type=L" | sfdisk $disk'
-limine1='arch-chroot /mnt bash -c "mkdir -p /boot/EFI/BOOT"'
-limine2='arch-chroot /mnt bash -c "cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI"'
-limine3="arch-chroot /mnt efibootmgr --create --disk $disk --part 1 --label 'Arch Linux Limine Boot Loader' --loader '\EFI\BOOT\BOOTX64.EFI' --unicode"
-limine4='Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI'
+limine1="mkdir -p /boot/EFI/BOOT"
+limine2="cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI"
+limine3="efibootmgr --create --disk $disk --part 1 --label 'Arch Linux Limine Boot Loader' --loader '\EFI\BOOT\BOOTX64.EFI' --unicode"
+limine4="Exec = /usr/bin/cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI"
 EOF
 else
     cat << 'EOF' >> scripts/variables.sh
 disklabel='echo -e "label: dos\n size=5G, type=c, bootable\n size=+, type=L" | sfdisk $disk'
-limine1='arch-chroot /mnt bash -c "mkdir -p /boot/limine"'
-limine2='arch-chroot /mnt bash -c "cp /usr/share/limine/limine-bios.sys /boot/limine/"'
-limine3='arch-chroot /mnt bash -c "limine bios-install $disk"'
+limine1="mkdir -p /boot/limine"
+limine2="cp /usr/share/limine/limine-bios.sys /boot/limine/"
+limine3="limine bios-install $disk"
 limine4k='Exec = /bin/sh -c "/usr/bin/limine bios-install $disk && /usr/bin/cp /usr/share/limine/limine-bios.sys /boot/limine/"'
 EOF
 fi

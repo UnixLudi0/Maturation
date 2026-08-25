@@ -85,9 +85,9 @@ mkdir -p /mnt/boot/limine
 mkdir -p /mnt/etc/pacman.d/hooks
 mkdir -p /mnt/boot/EFI/BOOT
 
-arch-chroot /mnt bash -c eval "$limine1"
-arch-chroot /mnt bash -c eval "$limine2"
-arch-chroot /mnt bash -c eval "$limine3"
+arch-chroot /mnt bash -c "$limine1"
+arch-chroot /mnt bash -c "$limine2"
+arch-chroot /mnt bash -c "$limine3"
 
 cat << EOF >> /mnt/etc/pacman.d/hooks/99-limine.hook
 [Trigger]
