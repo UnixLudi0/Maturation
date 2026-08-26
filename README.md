@@ -4,6 +4,7 @@ This project aims to bring optimization, integration, candy-eye to your desktop.
 This project is in passive development.
 Thanks to [ventureo](https://codeberg.org/ventureo) for mainteining the [ARU](https://ventureo.codeberg.page) and [CachyOS](https://cachyos.org/) for the [wiki](https://wiki.cachyos.org/) and cachyos repositories
 
+Currently wiping everything on selected disk and installing Arch Linux with this preferences (incomplete):
 ## Applications
 | Application Type         | Application Realization     |
 | ------------------------ | --------------------------- |

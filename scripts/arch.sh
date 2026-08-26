@@ -33,15 +33,14 @@ mount "$disk$part1" /mnt/boot
 pacman -Sy --noconfirm reflector
 reflector --verbose --country "$(curl -sSL 'https://ifconfig.co/country-iso')" --latest 25 --sort age --save /etc/pacman.d/mirrorlist
 mkdir -p /mnt/etc
-echo "KEYMAP=ru" >> /mnt/etc/vconsole.conf
+echo "KEYMAP=ruwin_alt_sh-UTF-8" >> /mnt/etc/vconsole.conf
 echo "FONT=cyr-sun16" >> /mnt/etc/vconsole.conf
 pacstrap -K /mnt base linux-firmware kbd btrfs-progs networkmanager sudo-rs
 genfstab -U /mnt > /mnt/etc/fstab
 arch-chroot /mnt bash -c 'ln -sf /usr/share/zoneinfo/'"$timezone" '/etc/localtime'
 arch-chroot /mnt bash -c 'hwclock --systohc'
-arch-chroot /mnt bash -c "echo locales > /etc/locale.gen"
 arch-chroot /mnt bash -c 'locale-gen'
-arch-chroot /mnt bash -c 'echo "LANG=ru_RU.UTF-8" > /etc/locale.conf'
+arch-chroot /mnt bash -c "echo \"LANG=$locale\" > /etc/locale.conf"
 arch-chroot /mnt bash -c 'systemctl enable NetworkManager'
 arch-chroot /mnt bash -c "echo \"$hostname\" > /etc/hostname"
 echo -e "$rootpass\n$rootpass" | arch-chroot /mnt passwd

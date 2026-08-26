@@ -27,13 +27,20 @@ lsblk -dn -o NAME | awk '$1 ~ /^(sd[a-z]|nvme[0-9]|vd[a-z]|mmcblk[0-9])/' | whil
     echo "" >> scripts/variables.sh
 done
 
-#generate & edit timezones lost as txt
+#generate & edit timezones list as txt
 timedatectl list-timezones > /tmp/timezones.txt
 sed -i 's/^/#/' /tmp/timezones.txt
 nano /tmp/timezones.txt
 
 #edit locales
+sudo sed -i 's/^[ ^#]/# /' /etc/locale.gen
 nano /etc/locale.gen
+
+grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /etc/locale.gen | while read -r locale; do
+
+    echo "#locale="$locale >> scripts/variables.sh
+
+done
 
 #timezone
 echo "timezone=$(grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /tmp/timezones.txt)" >> scripts/variables.sh
