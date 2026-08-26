@@ -33,10 +33,10 @@ sed -i 's/^/#/' /tmp/timezones.txt
 nano /tmp/timezones.txt
 
 #edit locales
-sed -i '/^#/! s/^/# /; /^[[:space:]]*$/ s/^# //' /etc/locale.gen
+sed -i '/^[[:space:]]*$/b; /^#/b; s/^/#/' /etc/locale.gen
 nano /etc/locale.gen
 
-grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /etc/locale.gen | while read -r locale; do
+grep -Ev '^[[:space:]]*#|^[[:space:]]*$' /etc/locale.gen | awk '{print $1}' | while read -r locale; do
 
     echo "#locale=\"$locale\"" >> scripts/variables.sh
 
