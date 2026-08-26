@@ -39,6 +39,7 @@ pacstrap -K /mnt base linux-firmware kbd btrfs-progs networkmanager sudo-rs
 genfstab -U /mnt > /mnt/etc/fstab
 arch-chroot /mnt bash -c 'ln -sf /usr/share/zoneinfo/'"$timezone" '/etc/localtime'
 arch-chroot /mnt bash -c 'hwclock --systohc'
+cp /etc/locale.gen /mnt/etc/locale.gen
 arch-chroot /mnt bash -c 'locale-gen'
 arch-chroot /mnt bash -c "echo \"LANG=$locale\" > /etc/locale.conf"
 arch-chroot /mnt bash -c 'systemctl enable NetworkManager'
